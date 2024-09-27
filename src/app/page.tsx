@@ -1,6 +1,7 @@
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Sidebar } from './Sidebar'
+import KnowledgeTree from './KnowledgeTree'
 
 export default async function Home() {
   return (
@@ -12,7 +13,9 @@ export default async function Home() {
       </header>
       <main className="flex h-full min-h-0 overflow-hidden">
         <Sidebar />
-        <div className="w-full min-w-0">hej</div>
+        <div className="w-full min-w-0">
+          <KnowledgeTree />
+        </div>
       </main>
     </div>
   )
