@@ -13,6 +13,8 @@
 /.next/
 /out/
 
+/repos
+
 # production
 /build
 
