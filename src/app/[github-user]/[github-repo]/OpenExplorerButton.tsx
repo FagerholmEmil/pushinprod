@@ -2,8 +2,8 @@
 
 import { useSetAtom } from 'jotai';
 import React from 'react';
-import { fileExplorerOpenAtom } from './state';
 import { Button } from '@/components/ui/button';
+import { fileExplorerOpenAtom } from './state';
 
 interface OpenExplorerButtonProps {}
 

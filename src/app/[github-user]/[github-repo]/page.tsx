@@ -9,39 +9,58 @@ import {
 } from '@/components/ui/resizable';
 import { OpenExplorerButton } from './OpenExplorerButton';
 import { FileSettings } from './FileSettings';
+import { useParams } from 'next/navigation';
+import { getFileData } from './actions';
+import { AtomHydrate } from './AtomHydrate';
 
-export default async function Home() {
+export default async function Home({
+  params,
+}: {
+  params: { 'github-user': string; 'github-repo': string };
+}) {
+  console.log('PPPP');
+  console.log(params);
+
+  const { 'github-user': githubUser, 'github-repo': githubRepo } = params;
+
+  const fileData = await getFileData(githubUser, githubRepo);
+
+  console.log({ githubUser, githubRepo });
+  console.log({ fileData });
+
   return (
-    <div className="h-screen flex flex-col">
-      <header className="border-b p-4 shrink-0 flex justify-between items-center">
-        <Link href="/" className="font-medium font-serif text-lg italic">
-          Pushin-P<span className="font-black">(rod)</span>
-        </Link>
-        <div className="flex gap-2 items-center">
-          <OpenExplorerButton />
-          <FileSettings />
-          <Link href="/animated">
-            <Button variant="default" size="sm">
-              Scan Codebase
-            </Button>
+    <AtomHydrate data={fileData}>
+      <div className="h-screen flex flex-col">
+        <header className="border-b p-4 shrink-0 flex justify-between items-center">
+          <Link href="/" className="font-medium font-serif text-lg italic">
+            Pushin-P<span className="font-black">(rod)</span>
           </Link>
-        </div>
-      </header>
-      <ResizablePanelGroup
-        direction="horizontal"
-        className="flex h-full min-h-0 overflow-hidden"
-      >
-        <ResizablePanel defaultSize={50}>
-          <Sidebar />
-        </ResizablePanel>
-        <ResizableHandle withHandle />
-
-        <ResizablePanel defaultSize={50}>
-          <div className="min-w-0">
-            <KnowledgeTree />
+          <div className="flex gap-2 items-center">
+            <OpenExplorerButton />
+            <FileSettings />
+            <Link href="/animated">
+              <Button variant="default" size="sm">
+                Scan Codebase
+              </Button>
+            </Link>
           </div>
-        </ResizablePanel>
-      </ResizablePanelGroup>
-    </div>
+        </header>
+        <ResizablePanelGroup
+          direction="horizontal"
+          className="flex h-full min-h-0 overflow-hidden"
+        >
+          <ResizablePanel defaultSize={50}>
+            <Sidebar />
+          </ResizablePanel>
+          <ResizableHandle withHandle />
+
+          <ResizablePanel defaultSize={50}>
+            <div className="min-w-0">
+              <KnowledgeTree />
+            </div>
+          </ResizablePanel>
+        </ResizablePanelGroup>
+      </div>
+    </AtomHydrate>
   );
 }

@@ -9,6 +9,8 @@
 # testing
 /coverage
 
+/knowledge-tree
+
 .env
 
 # next.js

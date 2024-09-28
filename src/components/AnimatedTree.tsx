@@ -4,9 +4,11 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
-import data from '../app/data.json';
-import { useSetAtom } from 'jotai';
-import { selectedFileAtom } from '../app/[github-user]/[github-repo]/state';
+import { useAtomValue, useSetAtom } from 'jotai';
+import {
+  repoDataAtom,
+  selectedFileAtom,
+} from '../app/[github-user]/[github-repo]/state';
 
 interface Node extends d3.SimulationNodeDatum {
   id: string;
@@ -34,6 +36,7 @@ export const AnimatedTree: React.FC = () => {
   const [greenNodes, setGreenNodes] = useState<{ [key: string]: string }>({});
   const [highlightedNodeStatus, setHighlightedNodeStatus] =
     useState<string>('');
+  const data = useAtomValue(repoDataAtom);
 
   useEffect(() => {
     if (!svgRef.current) return;

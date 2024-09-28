@@ -2,8 +2,6 @@
 
 import React from 'react';
 
-import data from '../../data.json';
-
 import {
   CommandDialog,
   CommandEmpty,
@@ -13,8 +11,8 @@ import {
   CommandList,
   CommandSeparator,
 } from '@/components/ui/command';
-import { useAtom, useSetAtom } from 'jotai';
-import { fileExplorerOpenAtom, selectedFileAtom } from './state';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
+import { fileExplorerOpenAtom, repoDataAtom, selectedFileAtom } from './state';
 import { getLogo } from './getFileIcon';
 
 interface FileExplorerProps {}
@@ -22,6 +20,7 @@ interface FileExplorerProps {}
 export const FileExplorer: React.FC<FileExplorerProps> = ({}) => {
   const [open, setOpen] = useAtom(fileExplorerOpenAtom);
   const setSelectedFile = useSetAtom(selectedFileAtom);
+  const data = useAtomValue(repoDataAtom);
 
   React.useEffect(() => {
     const down = (e: KeyboardEvent) => {

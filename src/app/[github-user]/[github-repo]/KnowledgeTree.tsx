@@ -3,9 +3,12 @@
 'use client';
 import React, { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
-import data from '../../data.json';
 import { useAtomValue, useSetAtom } from 'jotai';
-import { allowedFileExtensionsAtom, selectedFileAtom } from './state';
+import {
+  allowedFileExtensionsAtom,
+  repoDataAtom,
+  selectedFileAtom,
+} from './state';
 
 interface Node {
   id: string;
@@ -19,6 +22,10 @@ interface Link {
 }
 
 export const KnowledgeTree: React.FC = () => {
+  const data = useAtomValue(repoDataAtom);
+
+  console.log({ data });
+
   const svgRef = useRef<SVGSVGElement>(null);
   const setSelectedFile = useSetAtom(selectedFileAtom);
 

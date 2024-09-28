@@ -10,15 +10,16 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import data from '../../data.json';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
-import { useAtom } from 'jotai';
-import { allowedFileExtensionsAtom } from './state';
+import { useAtom, useAtomValue } from 'jotai';
+import { allowedFileExtensionsAtom, repoDataAtom } from './state';
 
 interface FileSettingsProps {}
 
 export const FileSettings: React.FC<FileSettingsProps> = ({}) => {
+  const data = useAtomValue(repoDataAtom);
+
   const allFileExtensions = useMemo<string[]>(
     () =>
       (
