@@ -34,12 +34,15 @@ export function ChatPanel({
   const fileSource = selectedFile
     ? data[selectedFile as keyof typeof data]?.source
     : null;
+  const markdownFormattedCode = fileSource
+    ? `\`\`\`language\n${fileSource}\n\`\`\``
+    : '';
 
   const exampleMessages = [
     {
       heading: 'Comprehensive Code Review',
       subheading: 'Analyze for quality, performance, and best practices',
-      message: `Perform a thorough code review of the ${fileSource || 'current file'}. Focus on:
+      message: `Perform a thorough code review of the ${markdownFormattedCode || 'current file'}. Focus on:
 1. Code quality: Identify unused variables, functions, or dead code.
 2. Performance: Detect inefficient algorithms or unnecessary computations.
 3. Best practices: Suggest improvements for readability, maintainability, and adherence to SOLID principles.
@@ -49,7 +52,7 @@ Prioritize suggestions based on their potential impact and ease of implementatio
     {
       heading: 'Performance & Scalability Audit',
       subheading: 'Optimize for efficiency and future growth',
-      message: `Conduct a performance and scalability audit of the ${fileSource || 'current file'}. Address the following:
+      message: `Conduct a performance and scalability audit of the ${markdownFormattedCode || 'current file'}. Address the following:
 1. Algorithmic efficiency: Identify and suggest optimizations for any inefficient algorithms.
 2. Resource usage: Detect potential memory leaks or excessive resource consumption.
 3. Caching & memoization: Recommend areas where caching could improve performance.
@@ -60,7 +63,7 @@ Provide practical, easy-to-implement solutions for each identified issue.`,
     {
       heading: 'Security & Best Practices Assessment',
       subheading: 'Enhance code security and robustness',
-      message: `Perform a security and best practices assessment of the ${fileSource || 'current file'}. Focus on:
+      message: `Perform a security and best practices assessment of the ${markdownFormattedCode || 'current file'}. Focus on:
 1. Potential vulnerabilities: Identify risks such as injection flaws, XSS, or CSRF.
 2. Authentication & authorization: Evaluate the strength of user authentication and access control.
 3. Data handling: Assess the security of data storage, transmission, and processing.
@@ -71,7 +74,7 @@ Provide clear, actionable recommendations to address each identified security co
     {
       heading: 'Testing Strategy Evaluation',
       subheading: 'Improve test coverage and quality assurance',
-      message: `Evaluate the testing strategy for the ${fileSource || 'current file'} and suggest improvements:
+      message: `Evaluate the testing strategy for the ${markdownFormattedCode || 'current file'} and suggest improvements:
 1. Test coverage: Identify areas lacking sufficient test coverage.
 2. Edge cases: Recommend additional tests for boundary conditions and error scenarios.
 3. Test quality: Assess the effectiveness of existing tests and suggest improvements.
@@ -89,7 +92,11 @@ Provide a prioritized list of testing improvements to enhance overall code relia
       ...currentMessages,
       {
         id: nanoid(),
-        display: <UserMessage>{message}</UserMessage>,
+        display: (
+          <UserMessage>
+            {message.replace(/```language[\s\S]*?```/g, 'file')}
+          </UserMessage>
+        ),
       },
     ]);
 
