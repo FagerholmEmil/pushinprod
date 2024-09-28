@@ -1,7 +1,5 @@
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { Sidebar } from './Sidebar'
-import KnowledgeTree from './KnowledgeTree'
+import { KnowledgeTree } from './KnowledgeTree'
 
 export default async function Home() {
   return (

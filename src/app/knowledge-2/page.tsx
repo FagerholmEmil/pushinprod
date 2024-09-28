@@ -26,7 +26,22 @@ export default async function Home() {
           return getFiles(res)
         } else {
           const ext = path.extname(res)
-          return ['.js', '.ts', '.tsx', '.jsx'].includes(ext) ? res : []
+          return [
+            '.js',
+            '.ts',
+            '.tsx',
+            '.jsx',
+            '.css',
+            '.scss',
+            '.sass',
+            '.html',
+            '.graphql',
+            '.gql',
+            '.mjs',
+            '.cjs',
+          ].includes(ext)
+            ? res
+            : []
         }
       })
     )
@@ -44,21 +59,31 @@ export default async function Home() {
 
   // Create a knowledge tree of file dependencies
   const knowledgeTree = {}
-
   fileContents.forEach(({ path, content }) => {
-    const ast = parse(content, {
-      sourceType: 'module',
-      plugins: ['jsx', 'typescript'],
-    })
-    const dependencies = []
+    let dependencies = []
 
-    traverse(ast, {
-      ImportDeclaration({ node }) {
-        dependencies.push(node.source.value)
-      },
-    })
+    if (
+      path.endsWith('.js') ||
+      path.endsWith('.ts') ||
+      path.endsWith('.tsx') ||
+      path.endsWith('.jsx')
+    ) {
+      const ast = parse(content, {
+        sourceType: 'module',
+        plugins: ['jsx', 'typescript'],
+      })
 
-    knowledgeTree[path] = dependencies
+      traverse(ast, {
+        ImportDeclaration({ node }) {
+          dependencies.push(node.source.value)
+        },
+      })
+    }
+
+    knowledgeTree[path] = {
+      source: content,
+      dependencies: dependencies,
+    }
   })
 
   return (

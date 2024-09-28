@@ -5,6 +5,10 @@ import { Label } from '@/components/ui/label'
 import { cn } from '@/lib/utils'
 import { PanelLeftClose, PanelLeftOpen } from 'lucide-react'
 import React, { useState } from 'react'
+import { FileExplorer } from './FileExplorer'
+import { useAtom, useAtomValue } from 'jotai'
+import { selectedFileAtom } from './state'
+import { FileCode } from './FileCode'
 
 interface SidebarProps {}
 
@@ -34,11 +38,11 @@ export const Sidebar: React.FC<SidebarProps> = ({}) => {
           )}
         </div>
 
-        <Label className="text-secondary-foreground">Button.tsx</Label>
-        <div className="rounded bg-secondary p-2">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Similique,
-          harum.
+        <div className="">
+          <FileExplorer />
         </div>
+
+        <FileCode />
       </div>
 
       <div className="flex-shrink-0">
