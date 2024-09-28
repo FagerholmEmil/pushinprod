@@ -8,6 +8,7 @@ import {
   ResizablePanelGroup,
 } from '@/components/ui/resizable';
 import { OpenExplorerButton } from './OpenExplorerButton';
+import { FileSettings } from './FileSettings';
 
 export default async function Home() {
   return (
@@ -18,6 +19,7 @@ export default async function Home() {
         </Link>
         <div className="flex gap-2 items-center">
           <OpenExplorerButton />
+          <FileSettings />
           <Link href="/animated">
             <Button variant="default" size="sm">
               Scan Codebase

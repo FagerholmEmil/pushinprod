@@ -3,8 +3,8 @@
 import React, { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
 import data from './data.json';
-import { useSetAtom } from 'jotai';
-import { selectedFileAtom } from './state';
+import { useAtomValue, useSetAtom } from 'jotai';
+import { allowedFileExtensionsAtom, selectedFileAtom } from './state';
 
 interface Node {
   id: string;
@@ -20,6 +20,8 @@ interface Link {
 export const KnowledgeTree: React.FC = () => {
   const svgRef = useRef<SVGSVGElement>(null);
   const setSelectedFile = useSetAtom(selectedFileAtom);
+
+  const allowedFileExtensions = useAtomValue(allowedFileExtensionsAtom);
 
   useEffect(() => {
     if (!svgRef.current) return;
@@ -49,10 +51,16 @@ export const KnowledgeTree: React.FC = () => {
 
     // Create a Set of all unique node IDs
     const nodeIds = new Set<string>();
-    Object.keys(data).forEach((file) => {
-      nodeIds.add(file);
-      data[file].dependencies.forEach((dep) => nodeIds.add(dep));
-    });
+    Object.keys(data)
+      .filter(
+        (file) =>
+          allowedFileExtensions.length === 0 ||
+          allowedFileExtensions.includes(file.split('.').pop() || '')
+      )
+      .forEach((file) => {
+        nodeIds.add(file);
+        data[file].dependencies.forEach((dep) => nodeIds.add(dep));
+      });
 
     // Create nodes array
     const nodes: Node[] = Array.from(nodeIds).map((id, index) => ({
@@ -62,15 +70,21 @@ export const KnowledgeTree: React.FC = () => {
 
     // Create links array
     const links: Link[] = [];
-    Object.entries(data).forEach(([file, { dependencies }]) => {
-      dependencies.forEach((dep) => {
-        links.push({
-          source: file,
-          target: dep,
-          value: 1,
+    Object.entries(data)
+      .filter(
+        ([file]) =>
+          allowedFileExtensions.length === 0 ||
+          allowedFileExtensions.includes(file.split('.').pop() || '')
+      )
+      .forEach(([file, { dependencies }]) => {
+        dependencies.forEach((dep) => {
+          links.push({
+            source: file,
+            target: dep,
+            value: 1,
+          });
         });
       });
-    });
 
     // Calculate the degree (number of connections) for each node
     const nodeDegrees: { [key: string]: number } = {};
@@ -113,12 +127,12 @@ export const KnowledgeTree: React.FC = () => {
       .attr('stroke-width', (d: any) => Math.sqrt(d.value));
 
     const fileExtensions = {
-      tsx: '#3498db',  // Blue
-      ts: '#2ecc71',   // Green
+      tsx: '#3498db', // Blue
+      ts: '#2ecc71', // Green
       json: '#e74c3c', // Red
-      js: '#f39c12',   // Orange
-      cjs: '#9b59b6',  // Purple
-      config: '#1abc9c' // Turquoise
+      js: '#f39c12', // Orange
+      cjs: '#9b59b6', // Purple
+      config: '#1abc9c', // Turquoise
     };
 
     const getNodeColor = (id: string) => {
@@ -255,7 +269,7 @@ export const KnowledgeTree: React.FC = () => {
 
       node.attr('cx', (d: any) => d.x).attr('cy', (d: any) => d.y);
     });
-  }, [setSelectedFile]);
+  }, [setSelectedFile, allowedFileExtensions]);
 
   return (
     <div className="w-screen h-screen bg-black">
