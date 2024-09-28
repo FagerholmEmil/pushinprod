@@ -35,24 +35,47 @@ export function ChatPanel({
 
   const exampleMessages = [
     {
-      heading: 'Code Quality Review',
-      subheading: 'Analyze the current file for improvements',
-      message: `Analyze the ${selectedFile || 'current file'} for code quality improvements. Focus on identifying unused variables, functions, or dead code, and suggest refactoring opportunities to enhance readability and maintainability.`,
+      heading: 'Comprehensive Code Review',
+      subheading: 'Analyze for quality, performance, and best practices',
+      message: `Perform a thorough code review of the ${selectedFile || 'current file'}. Focus on:
+1. Code quality: Identify unused variables, functions, or dead code.
+2. Performance: Detect inefficient algorithms or unnecessary computations.
+3. Best practices: Suggest improvements for readability, maintainability, and adherence to SOLID principles.
+4. Refactoring: Propose practical, high-impact refactoring opportunities.
+Prioritize suggestions based on their potential impact and ease of implementation.`,
     },
     {
-      heading: 'Performance Optimization',
-      subheading: 'Suggest performance enhancements',
-      message: `Review the ${selectedFile || 'current file'} for performance optimization opportunities. Identify any inefficient algorithms, unnecessary computations, or areas where caching or memoization could be beneficial.`,
+      heading: 'Performance & Scalability Audit',
+      subheading: 'Optimize for efficiency and future growth',
+      message: `Conduct a performance and scalability audit of the ${selectedFile || 'current file'}. Address the following:
+1. Algorithmic efficiency: Identify and suggest optimizations for any inefficient algorithms.
+2. Resource usage: Detect potential memory leaks or excessive resource consumption.
+3. Caching & memoization: Recommend areas where caching could improve performance.
+4. Scalability: Identify potential bottlenecks that could impact system scalability.
+5. Asynchronous processing: Suggest opportunities for concurrent or parallel execution.
+Provide practical, easy-to-implement solutions for each identified issue.`,
     },
     {
-      heading: 'Security Best Practices',
-      subheading: 'Check for potential vulnerabilities',
-      message: `Examine the ${selectedFile || 'current file'} for potential security vulnerabilities. Look for issues such as injection flaws, authentication weaknesses, or insecure data handling practices.`,
+      heading: 'Security & Best Practices Assessment',
+      subheading: 'Enhance code security and robustness',
+      message: `Perform a security and best practices assessment of the ${selectedFile || 'current file'}. Focus on:
+1. Potential vulnerabilities: Identify risks such as injection flaws, XSS, or CSRF.
+2. Authentication & authorization: Evaluate the strength of user authentication and access control.
+3. Data handling: Assess the security of data storage, transmission, and processing.
+4. Error handling: Review exception management and logging practices.
+5. Dependency security: Check for any outdated dependencies with known vulnerabilities.
+Provide clear, actionable recommendations to address each identified security concern.`,
     },
     {
-      heading: 'Testing Improvements',
-      subheading: 'Enhance test coverage and quality',
-      message: `Analyze the test coverage and quality for the ${selectedFile || 'current file'}. Suggest improvements for edge case testing, error scenarios, and overall test suite efficiency.`,
+      heading: 'Testing Strategy Evaluation',
+      subheading: 'Improve test coverage and quality assurance',
+      message: `Evaluate the testing strategy for the ${selectedFile || 'current file'} and suggest improvements:
+1. Test coverage: Identify areas lacking sufficient test coverage.
+2. Edge cases: Recommend additional tests for boundary conditions and error scenarios.
+3. Test quality: Assess the effectiveness of existing tests and suggest improvements.
+4. Performance testing: Propose strategies for testing under various load conditions.
+5. Mocking and stubbing: Suggest best practices for isolating units under test.
+Provide a prioritized list of testing improvements to enhance overall code reliability.`,
     },
   ];
 
