@@ -1,14 +1,14 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
-import data from './data.json';
+import data from '../app/data.json';
 import { useSetAtom } from 'jotai';
-import { selectedFileAtom } from './state';
+import { selectedFileAtom } from '../app/state';
 
 interface Node {
   id: string;
-  group: number;
+  active: boolean;
 }
 
 interface Link {
@@ -17,9 +17,10 @@ interface Link {
   value: number;
 }
 
-export const KnowledgeTree: React.FC = () => {
+export const AnimatedTree: React.FC = () => {
   const svgRef = useRef<SVGSVGElement>(null);
   const setSelectedFile = useSetAtom(selectedFileAtom);
+  const [scannedNodes, setScannedNodes] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     if (!svgRef.current) return;
@@ -54,10 +55,10 @@ export const KnowledgeTree: React.FC = () => {
       data[file].dependencies.forEach((dep) => nodeIds.add(dep));
     });
 
-    // Create nodes array
-    const nodes: Node[] = Array.from(nodeIds).map((id, index) => ({
+    // Modify the nodes creation
+    const nodes: Node[] = Array.from(nodeIds).map((id) => ({
       id,
-      group: index % 5, // Assign a group for coloring
+      active: true, // All nodes are potentially active now
     }));
 
     // Create links array
@@ -112,20 +113,6 @@ export const KnowledgeTree: React.FC = () => {
       .attr('stroke-opacity', 0.6)
       .attr('stroke-width', (d: any) => Math.sqrt(d.value));
 
-    const fileExtensions = {
-      tsx: '#3498db',  // Blue
-      ts: '#2ecc71',   // Green
-      json: '#e74c3c', // Red
-      js: '#f39c12',   // Orange
-      cjs: '#9b59b6',  // Purple
-      config: '#1abc9c' // Turquoise
-    };
-
-    const getNodeColor = (id: string) => {
-      const extension = id.split('.').pop()?.toLowerCase();
-      return fileExtensions[extension] || '#95a5a6'; // Default to gray
-    };
-
     const node = g
       .append('g')
       .attr('class', 'nodes')
@@ -133,7 +120,7 @@ export const KnowledgeTree: React.FC = () => {
       .data(nodes)
       .join('circle')
       .attr('r', (d: any) => nodeScale(nodeDegrees[d.id] || 1))
-      .attr('fill', (d: any) => getNodeColor(d.id))
+      .attr('fill', '#808080') // Start all nodes as gray
       .attr('data-id', (d: any) => d.id)
       .call(drag(simulation));
 
@@ -168,6 +155,22 @@ export const KnowledgeTree: React.FC = () => {
         tooltip.style('visibility', 'hidden');
       });
 
+    // Update the scanNodes function
+    let currentIndex = 0;
+    function scanNodes() {
+      const currentNode = nodes[currentIndex];
+      setScannedNodes(prev => new Set(prev).add(currentNode.id));
+
+      node.attr('fill', (d: any) => 
+        scannedNodes.has(d.id) ? '#00ff00' : '#808080'
+      );
+
+      currentIndex = (currentIndex + 1) % nodes.length;
+      setTimeout(scanNodes, 100); // Adjust the speed of scanning here
+    }
+
+    scanNodes();
+
     function handleNodeClick(event: MouseEvent, d: any) {
       const clickedNode = d3.select(event.currentTarget);
       const isSelected = clickedNode.classed('selected');
@@ -177,14 +180,14 @@ export const KnowledgeTree: React.FC = () => {
 
       // Reset all nodes and links
       node
-        .attr('fill', (d: any) => d3.schemeCategory10[d.group])
+        .attr('fill', (n: any) => scannedNodes.has(n.id) ? '#00ff00' : '#808080')
         .attr('opacity', 1)
         .classed('selected', false);
       link.attr('stroke', '#999').attr('opacity', 0.6);
 
       if (!isSelected) {
         // Highlight selected node and its connections
-        clickedNode.classed('selected', true).attr('fill', '#ff0000');
+        clickedNode.classed('selected', true).attr('fill', '#00ff00');
 
         const connectedNodes = new Set<string>([d.id]);
         link.each((l: any) => {
@@ -194,7 +197,8 @@ export const KnowledgeTree: React.FC = () => {
 
         node
           .attr('fill', (n: any) =>
-            connectedNodes.has(n.id) ? '#00ff00' : '#808080'
+            connectedNodes.has(n.id) ? '#00ff00' : 
+            scannedNodes.has(n.id) ? '#008000' : '#808080'
           )
           .attr('opacity', (n: any) => (connectedNodes.has(n.id) ? 1 : 0.3));
 
@@ -212,7 +216,7 @@ export const KnowledgeTree: React.FC = () => {
     d3.select('body').on('keydown', (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         node
-          .attr('fill', (d: any) => d3.schemeCategory10[d.group])
+          .attr('fill', (d: any) => d.active ? '#00ff00' : '#808080')
           .attr('opacity', 1)
           .classed('selected', false);
         link.attr('stroke', '#999').attr('opacity', 0.6);
@@ -255,7 +259,7 @@ export const KnowledgeTree: React.FC = () => {
 
       node.attr('cx', (d: any) => d.x).attr('cy', (d: any) => d.y);
     });
-  }, [setSelectedFile]);
+  }, [setSelectedFile, scannedNodes]);
 
   return (
     <div className="w-screen h-screen bg-black">
