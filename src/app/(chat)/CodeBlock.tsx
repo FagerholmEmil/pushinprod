@@ -107,7 +107,7 @@ const CodeBlock: FC<Props> = memo(({ language, value }) => {
 
   return (
     <div className="relative w-full font-sans codeblock bg-zinc-950">
-      <div className="flex items-center justify-between w-full px-6 py-2 pr-4 bg-zinc-800 text-zinc-100">
+      <div className="flex items-center justify-between w-full px-3 py-1 bg-muted">
         <span className="text-xs lowercase">{language}</span>
         <div className="flex items-center space-x-1">
           <Button
@@ -116,7 +116,7 @@ const CodeBlock: FC<Props> = memo(({ language, value }) => {
             onClick={downloadAsFile}
             size="icon"
           >
-            <Download />
+            <Download className="w-4 h-4" />
             <span className="sr-only">Download</span>
           </Button>
           <Button
@@ -125,13 +125,17 @@ const CodeBlock: FC<Props> = memo(({ language, value }) => {
             className="text-xs hover:bg-zinc-800 focus-visible:ring-1 focus-visible:ring-slate-700 focus-visible:ring-offset-0"
             onClick={onCopy}
           >
-            {isCopied ? <Check /> : <Copy />}
+            {isCopied ? (
+              <Check className="w-4 h-4" />
+            ) : (
+              <Copy className="w-4 h-4" />
+            )}
             <span className="sr-only">Copy code</span>
           </Button>
         </div>
       </div>
       <div
-        className="p-4"
+        className="[&>pre]:overflow-x-auto [&>pre]:p-4 text-xs"
         dangerouslySetInnerHTML={{ __html: highlightedCode }}
       />
     </div>

@@ -22,7 +22,7 @@ export function BotMessage({
   const text = useStreamableText(content);
 
   return (
-    <div className={cn('group relative flex items-start md:-ml-12', className)}>
+    <div className={cn('group relative flex items-start', className)}>
       <div className="flex size-[24px] shrink-0 select-none items-center justify-center rounded-md border bg-primary text-primary-foreground shadow-sm">
         <Bot />
       </div>
@@ -81,7 +81,7 @@ export function BotCard({
   showAvatar?: boolean;
 }) {
   return (
-    <div className="group relative flex items-start md:-ml-12">
+    <div className="group relative flex items-start">
       <div
         className={cn(
           'flex size-[24px] shrink-0 select-none items-center justify-center rounded-md border bg-primary text-primary-foreground shadow-sm',
@@ -109,7 +109,7 @@ export function SystemMessage({ children }: { children: React.ReactNode }) {
 
 export function SpinnerMessage() {
   return (
-    <div className="group relative flex items-start md:-ml-12">
+    <div className="group relative flex items-start">
       <div className="flex size-[24px] shrink-0 select-none items-center justify-center rounded-md border bg-primary text-primary-foreground shadow-sm">
         <Bot />
       </div>
