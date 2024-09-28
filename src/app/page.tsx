@@ -1,6 +1,7 @@
 import { Sidebar } from './Sidebar';
 import { KnowledgeTree } from './KnowledgeTree';
 import { Button } from "@/components/ui/button";
+import Link from 'next/link';
 
 export default async function Home() {
   return (
@@ -9,7 +10,9 @@ export default async function Home() {
         <h1 className="font-medium font-serif text-lg italic">
           Pushin-P<span className="font-black">(rod)</span>
         </h1>
-        <Button variant="default">Scan Codebase</Button>
+        <Link href="/animated">
+          <Button variant="default">Scan Codebase</Button>
+        </Link>
       </header>
       <main className="flex h-full min-h-0 overflow-hidden">
         <Sidebar />
