@@ -83,7 +83,9 @@ export const cloneRepo = async (repo: string) => {
 
   console.log('writing json response');
 
-  await fs.mkdir('knowledge-tree', { recursive: true });
+  const _path = path.join(process.cwd(), 'knowledge-tree')
+
+  await fs.mkdir(_path, { recursive: true });
   await fs.writeFile(outputPath, JSON.stringify(knowledgeTree, null, 2));
 
   console.log(`Knowledge tree written to ${outputPath}`);
