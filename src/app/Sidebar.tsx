@@ -6,6 +6,7 @@ import { PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import React, { useState } from 'react';
 import { FileExplorer } from './FileExplorer';
 import { FileCode } from './FileCode';
+import { FileChat } from './FileChat';
 
 interface SidebarProps {}
 
@@ -19,9 +20,10 @@ export const Sidebar: React.FC<SidebarProps> = ({}) => {
         expanded ? 'max-w-lg' : 'max-w-80'
       )}
     >
-      <div className="flex-1 overflow-y-auto">
+      <FileChat />
+      {/* <div className="flex-1 overflow-y-auto">
         <div className="flex justify-end mb-2">
-          {/* <h1>Ask stuff</h1> */}
+
           {expanded ? (
             <PanelLeftClose
               className="w-4 h-4 cursor-pointer"
@@ -44,7 +46,7 @@ export const Sidebar: React.FC<SidebarProps> = ({}) => {
 
       <div className="flex-shrink-0 mt-3">
         <Input placeholder="Ask stuff" />
-      </div>
+      </div> */}
     </aside>
   );
 };
