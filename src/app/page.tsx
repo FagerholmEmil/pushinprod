@@ -1,7 +1,12 @@
 import { Sidebar } from './Sidebar';
 import { KnowledgeTree } from './KnowledgeTree';
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from '@/components/ui/resizable';
 
 export default async function Home() {
   return (
@@ -14,12 +19,21 @@ export default async function Home() {
           <Button variant="default">Scan Codebase</Button>
         </Link>
       </header>
-      <main className="flex h-full min-h-0 overflow-hidden">
-        <Sidebar />
-        <div className="w-full min-w-0">
-          <KnowledgeTree />
-        </div>
-      </main>
+      <ResizablePanelGroup
+        direction="horizontal"
+        className="flex h-full min-h-0 overflow-hidden"
+      >
+        <ResizablePanel defaultSize={50}>
+          <Sidebar />
+        </ResizablePanel>
+        <ResizableHandle withHandle />
+
+        <ResizablePanel defaultSize={50}>
+          <div className="min-w-0">
+            <KnowledgeTree />
+          </div>
+        </ResizablePanel>
+      </ResizablePanelGroup>
     </div>
   );
 }

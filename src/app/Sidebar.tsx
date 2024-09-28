@@ -1,51 +1,36 @@
 'use client';
 
-import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import React, { useState } from 'react';
 import { FileExplorer } from './FileExplorer';
 import { FileCode } from './FileCode';
 import { FileChat } from './(chat)/FileChat';
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from '@/components/ui/resizable';
 
 interface SidebarProps {}
-
 export const Sidebar: React.FC<SidebarProps> = ({}) => {
-  const [expanded, setExpanded] = useState(false);
-
   return (
-    <aside
-      className={cn(
-        'border-r flex flex-col overflow-hidden transition-all duration-300 ease-in-out p-4 h-full w-full',
-        expanded ? 'max-w-lg' : 'max-w-80'
-      )}
-    >
-      <div className="flex-1 overflow-y-auto">
-        <div className="flex justify-end mb-2">
-          {expanded ? (
-            <PanelLeftClose
-              className="w-4 h-4 cursor-pointer"
-              onClick={() => setExpanded(false)}
-            />
-          ) : (
-            <PanelLeftOpen
-              className="w-4 h-4 cursor-pointer"
-              onClick={() => setExpanded(true)}
-            />
-          )}
-        </div>
+    <aside className={cn('flex flex-col overflow-hidden h-full')}>
+      <ResizablePanelGroup direction="vertical">
+        <ResizablePanel minSize={10}>
+          <div className="flex-1 p-4 overflow-y-auto">
+            <div className="">
+              <FileExplorer />
+            </div>
 
-        <div className="">
-          <FileExplorer />
-        </div>
-
-        <FileCode />
-      </div>
-
-      <div className="flex-shrink-0 mt-3 min-h-0 overflow-y-auto">
-        {/* <Input placeholder="Ask stuff" /> */}
-        <FileChat />
-      </div>
+            <FileCode />
+          </div>
+        </ResizablePanel>
+        <ResizableHandle withHandle />
+        <ResizablePanel className="overflow-y-auto" minSize={10}>
+          <FileChat />
+        </ResizablePanel>
+      </ResizablePanelGroup>
     </aside>
   );
 };
