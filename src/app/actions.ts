@@ -1,116 +1,89 @@
-// @ts-nocheck
 'use server';
-
-import { exec } from 'child_process';
-import { promisify } from 'util';
-import fs from 'fs';
+// @ts-nocheck
+import { Octokit } from '@octokit/rest';
+import fs from 'fs/promises';
 import path from 'path';
 import { parse } from '@babel/parser';
 import traverse from '@babel/traverse';
 
-const execAsync = promisify(exec);
-const readFileAsync = promisify(fs.readFile);
+const octokit = new Octokit({
+  auth: process.env.GITHUB_AUTH_TOKEN, // Add your auth token here
+});
 
 export const cloneRepo = async (repo: string) => {
-  console.log('Clone repo');
+  console.log('Fetching repo');
 
-  let repoUrl = repo;
-  if (!repo.startsWith('https://github.com/')) {
-    repoUrl = `https://github.com/${repo}`;
-  }
-  if (!repoUrl.endsWith('.git')) {
-    repoUrl += '.git';
+  let [owner, repoName] = repo.split('/');
+  if (!owner || !repoName) {
+    throw new Error('Invalid repository format. Use owner/repo');
   }
 
-  console.log('repoUrl', repoUrl);
+  console.log('Owner:', owner, 'Repo:', repoName);
 
-  const localPath = `./repos/${repo.split('/').pop()}`;
-
-  if (!fs.existsSync(localPath)) {
-    // Clone the repository
-    await execAsync(`git clone ${repoUrl} ${localPath}`);
-  }
-  // Read the files from the cloned repository
-  const getFiles = async (dir: string): Promise<string[]> => {
-    const subdirs = await fs.promises.readdir(dir);
-    const files = await Promise.all(
-      subdirs.map(async (subdir) => {
-        const res = path.resolve(dir, subdir);
-        if ((await fs.promises.stat(res)).isDirectory()) {
-          return getFiles(res);
-        } else {
-          const ext = path.extname(res);
-          return [
-            '.js',
-            '.ts',
-            '.tsx',
-            '.jsx',
-            '.css',
-            '.scss',
-            '.sass',
-            '.html',
-            '.graphql',
-            '.gql',
-            '.mjs',
-            '.cjs',
-          ].includes(ext)
-            ? res
-            : [];
-        }
-      })
-    );
-
-    return files.reduce((a, f) => a.concat(f), []);
-  };
-  const files = await getFiles(localPath);
-
-  const fileContents = await Promise.all(
-    files.map(async (file) => {
-      const content = await readFileAsync(file, 'utf8');
-      return { path: file, content };
-    })
-  );
-
-  // Create a knowledge tree of file dependencies
   const knowledgeTree = {};
-  fileContents.forEach(({ path, content }) => {
-    let dependencies = [];
 
-    if (
-      path.endsWith('.js') ||
-      path.endsWith('.ts') ||
-      path.endsWith('.tsx') ||
-      path.endsWith('.jsx')
-    ) {
-      const ast = parse(content, {
-        sourceType: 'module',
-        plugins: ['jsx', 'typescript'],
+  async function processContent(item) {
+    if (item.type === 'file') {
+      const { data: fileContent } = await octokit.rest.repos.getContent({
+        owner,
+        repo: repoName,
+        path: item.path,
       });
 
-      traverse(ast, {
-        ImportDeclaration({ node }) {
-          dependencies.push(node.source.value);
-        },
+      const content = Buffer.from(fileContent.content, 'base64').toString(
+        'utf-8'
+      );
+      let dependencies = [];
+
+      if (
+        ['.js', '.ts', '.tsx', '.jsx'].some((ext) => item.path.endsWith(ext))
+      ) {
+        const ast = parse(content, {
+          sourceType: 'module',
+          plugins: ['jsx', 'typescript'],
+        });
+
+        traverse(ast, {
+          ImportDeclaration({ node }) {
+            dependencies.push(node.source.value);
+          },
+        });
+      }
+
+      knowledgeTree[item.path] = {
+        source: content,
+        dependencies: dependencies,
+      };
+    } else if (item.type === 'dir') {
+      const { data: dirContent } = await octokit.rest.repos.getContent({
+        owner,
+        repo: repoName,
+        path: item.path,
       });
+
+      for (const subItem of dirContent) {
+        await processContent(subItem);
+      }
     }
+  }
 
-    knowledgeTree[path] = {
-      source: content,
-      dependencies: dependencies,
-    };
+  const { data: rootContent } = await octokit.rest.repos.getContent({
+    owner,
+    repo: repoName,
+    path: '',
   });
 
-  const writeFileAsync = promisify(fs.writeFile);
+  for (const item of rootContent) {
+    await processContent(item);
+  }
 
-  const repoName = repoUrl?.split('/')?.pop()?.replace('.git', '');
-  const userName = repoUrl?.split('/')?.slice(-2, -1)[0];
-  const fileName = `${userName}-${repoName}.json`;
+  const fileName = `${owner}-${repoName}.json`;
   const outputPath = path.join('knowledge-tree', fileName);
 
   console.log('writing json response');
 
-  await fs.promises.mkdir('knowledge-tree', { recursive: true });
-  await writeFileAsync(outputPath, JSON.stringify(knowledgeTree, null, 2));
+  await fs.mkdir('knowledge-tree', { recursive: true });
+  await fs.writeFile(outputPath, JSON.stringify(knowledgeTree, null, 2));
 
   console.log(`Knowledge tree written to ${outputPath}`);
 
