@@ -1,47 +1,62 @@
-import { Sidebar } from './Sidebar';
-import { KnowledgeTree } from './KnowledgeTree';
+'use client';
+
 import { Button } from '@/components/ui/button';
-import Link from 'next/link';
-import {
-  ResizableHandle,
-  ResizablePanel,
-  ResizablePanelGroup,
-} from '@/components/ui/resizable';
-import { OpenExplorerButton } from './OpenExplorerButton';
-import { FileSettings } from './FileSettings';
+import { Input } from '@/components/ui/input';
+import React, { useState } from 'react';
+import { cloneRepo } from './actions';
+import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 
-export default async function Home() {
+const Home: React.FC = () => {
+  const [repo, setRepo] = useState('');
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+
+  const handleCloneRepo = async () => {
+    setLoading(true);
+    try {
+      const res = await cloneRepo(repo);
+
+      if (res.success) {
+        toast('Success!', {
+          description: 'Successfully cloned repo',
+        });
+        router.push(`/${repo}`);
+      } else {
+        toast('Error!', {
+          description: 'Error cloning repo',
+        });
+      }
+    } catch (error) {
+      console.error('Error cloning repo:', error);
+      toast('Error!', {
+        description: 'Error cloning repo',
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div className="h-screen flex flex-col">
-      <header className="border-b p-4 shrink-0 flex justify-between items-center">
-        <Link href="/" className="font-medium font-serif text-lg italic">
-          Pushin-P<span className="font-black">(rod)</span>
-        </Link>
-        <div className="flex gap-2 items-center">
-          <OpenExplorerButton />
-          <FileSettings />
-          <Link href="/animated">
-            <Button variant="default" size="sm">
-              Scan Codebase
-            </Button>
-          </Link>
-        </div>
-      </header>
-      <ResizablePanelGroup
-        direction="horizontal"
-        className="flex h-full min-h-0 overflow-hidden"
-      >
-        <ResizablePanel defaultSize={50}>
-          <Sidebar />
-        </ResizablePanel>
-        <ResizableHandle withHandle />
+    <div className="w-screen h-screen flex justify-center items-center">
+      <div className="w-full max-w-3xl">
+        <h1 className="text-5xl text-center mb-10 font-light italic">
+          Pushin-p<span className="text-blue-500">(rod)</span>
+        </h1>
 
-        <ResizablePanel defaultSize={50}>
-          <div className="min-w-0">
-            <KnowledgeTree />
-          </div>
-        </ResizablePanel>
-      </ResizablePanelGroup>
+        <Input
+          value={repo}
+          onChange={(e) => setRepo(e.target.value)}
+          placeholder="imMatheus/vercel-ui..."
+          className="relative w-full justify-start mb-4 rounded-[0.5rem] bg-muted/50 text-sm font-normal shadow-none"
+        />
+
+        <Button disabled={!repo || loading} onClick={handleCloneRepo}>
+          {loading ? 'Loading...' : 'Search'}
+        </Button>
+      </div>
     </div>
   );
-}
+};
+
+export default Home;

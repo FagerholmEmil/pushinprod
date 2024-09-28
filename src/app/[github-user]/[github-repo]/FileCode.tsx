@@ -3,15 +3,15 @@
 import React from 'react';
 import { selectedFileAtom } from './state';
 import { useAtomValue } from 'jotai';
-import data from './data.json';
+import data from '../../data.json';
 import { codeToHtml } from 'shiki';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { getLogo } from './getFileIcon';
 import { Skeleton } from '@/components/ui/skeleton';
 
-interface FileCodeProps { }
+interface FileCodeProps {}
 
-export const FileCode: React.FC<FileCodeProps> = ({ }) => {
+export const FileCode: React.FC<FileCodeProps> = ({}) => {
   const selectedFile = useAtomValue(selectedFileAtom);
   const file = selectedFile ? data[selectedFile as keyof typeof data] : null;
 

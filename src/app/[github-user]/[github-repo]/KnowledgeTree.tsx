@@ -3,7 +3,7 @@
 'use client';
 import React, { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
-import data from './data.json';
+import data from '../../data.json';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { allowedFileExtensionsAtom, selectedFileAtom } from './state';
 
