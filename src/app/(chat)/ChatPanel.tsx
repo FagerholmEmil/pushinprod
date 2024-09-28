@@ -7,12 +7,11 @@ import { AI } from './actions';
 import { ButtonScrollToBottom } from './ButtonScrollToBottom';
 import { PromptForm } from './PromtForm';
 import { atom, useAtom } from 'jotai';
+import { Message } from './types';
 
 export const selectedFileAtom = atom<string | null>(null);
 
 export interface ChatPanelProps {
-  id?: string;
-  title?: string;
   input: string;
   setInput: (value: string) => void;
   isAtBottom: boolean;
@@ -20,15 +19,13 @@ export interface ChatPanelProps {
 }
 
 export function ChatPanel({
-  id,
-  title,
   input,
   setInput,
   isAtBottom,
   scrollToBottom,
 }: ChatPanelProps) {
   const [aiState] = useAIState();
-  const [messages, setMessages] = useUIState<Message[]>();
+  const [messages, setMessages] = useUIState<typeof AI>();
   const { submitUserMessage } = useActions();
   const [shareDialogOpen, setShareDialogOpen] = React.useState(false);
   const [selectedFile] = useAtom(selectedFileAtom);
@@ -93,10 +90,7 @@ Provide a prioritized list of testing improvements to enhance overall code relia
 
     const responseMessage = await submitUserMessage(message);
 
-    setMessages((currentMessages) => [
-      ...currentMessages,
-      responseMessage,
-    ]);
+    setMessages((currentMessages) => [...currentMessages, responseMessage]);
   };
 
   return (
@@ -106,20 +100,30 @@ Provide a prioritized list of testing improvements to enhance overall code relia
         scrollToBottom={scrollToBottom}
       />
 
-      <div className="p-4 sm:p-6 md:p-8"> {/* Added padding here */}
-        <div className="mb-4 grid grid-cols-2 gap-4"> {/* Increased gap */}
+      <div className="p-4 sm:p-6 md:p-8">
+        {/* Added padding here */}
+        <div className="mb-4 grid grid-cols-2 gap-4">
+          {/* Increased gap */}
           {messages.length === 0 && (
             <>
               {visibleExampleMessages.map((example) => (
-                <ExampleMessageCard key={example.heading} example={example} onClick={handleExampleClick} />
+                <ExampleMessageCard
+                  key={example.heading}
+                  example={example}
+                  onClick={handleExampleClick}
+                />
               ))}
               {additionalExampleMessages.map((example) => (
-                <ExampleMessageCard key={example.heading} example={example} onClick={handleExampleClick} className="hidden md:block" />
+                <ExampleMessageCard
+                  key={example.heading}
+                  example={example}
+                  onClick={handleExampleClick}
+                  className="hidden md:block"
+                />
               ))}
             </>
           )}
         </div>
-
         <div className="sticky bottom-0">
           <PromptForm input={input} setInput={setInput} />
         </div>
@@ -129,7 +133,15 @@ Provide a prioritized list of testing improvements to enhance overall code relia
 }
 
 // Updated ExampleMessageCard component
-function ExampleMessageCard({ example, onClick, className = '' }) {
+function ExampleMessageCard({
+  example,
+  onClick,
+  className = '',
+}: {
+  example: { heading: string; subheading: string; message: string };
+  onClick: (message: string) => void;
+  className?: string;
+}) {
   return (
     <div
       className={`cursor-pointer rounded-lg border bg-white p-4 hover:bg-zinc-50 dark:bg-zinc-950 dark:hover:bg-zinc-900 ${className}`}

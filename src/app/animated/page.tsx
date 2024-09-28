@@ -1,12 +1,12 @@
-import { AnimatedTree } from '@/components/AnimatedTree'
-import React from 'react'
+import { AnimatedTree } from '@/components/AnimatedTree';
+import React from 'react';
 
-const page = () => {
+const Page = () => {
   return (
     <div>
-        <AnimatedTree />
+      <AnimatedTree />
     </div>
-  )
-}
+  );
+};
 
-export default page
+export default Page;

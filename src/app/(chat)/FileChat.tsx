@@ -30,7 +30,6 @@ export const FileChat: React.FC<FileChatProps> = ({}) => {
         <div className="w-full h-px" ref={visibilityRef} />
       </div>
       <ChatPanel
-        id={'file-chat'}
         input={input}
         setInput={setInput}
         isAtBottom={isAtBottom}
