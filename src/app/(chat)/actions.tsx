@@ -106,7 +106,7 @@ async function submitUserMessage(content: string) {
   let textNode: undefined | React.ReactNode;
 
   const result = await streamUI({
-    model: openai('gpt-4o-mini'),
+    model: openai('gpt-4o'),
     initial: <SpinnerMessage />,
     system: `\
     You are an expert web developer and code quality specialist acting as a Code Review and Optimization Assistant. Your core mission is to analyze codebases, identify areas for improvement, and suggest practical, high-value optimizations that align with modern software development best practices.
