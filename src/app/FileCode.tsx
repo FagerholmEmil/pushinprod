@@ -9,21 +9,15 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { getLogo } from './getFileIcon';
 import { Skeleton } from '@/components/ui/skeleton';
 
-interface FileCodeProps {}
+interface FileCodeProps { }
 
-export const FileCode: React.FC<FileCodeProps> = ({}) => {
+export const FileCode: React.FC<FileCodeProps> = ({ }) => {
   const selectedFile = useAtomValue(selectedFileAtom);
   const file = selectedFile ? data[selectedFile as keyof typeof data] : null;
 
-  console.log(data[selectedFile]);
-
-  if (!file) return <p>No file selected</p>;
+  if (!file || !selectedFile) return <p>No file selected</p>;
 
   const fileExtension = selectedFile.split('.').pop() || 'js';
-
-  console.log('ooo');
-  console.log(file.source);
-  console.log(fileExtension);
 
   return (
     <div>

@@ -32,7 +32,7 @@ export default async function Home() {
         className="flex h-full min-h-0 overflow-hidden"
       >
         <ResizablePanel defaultSize={50}>
-          <Sidebar />
+          {/* <Sidebar /> */}
         </ResizablePanel>
         <ResizableHandle withHandle />
 
