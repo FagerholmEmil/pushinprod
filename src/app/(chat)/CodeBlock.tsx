@@ -64,7 +64,7 @@ const CodeBlock: FC<Props> = memo(({ language, value }) => {
 
     const highlight = async () => {
       highlighter = await getHighlighter({
-        theme: 'github-dark',
+        themes: ['github-dark'],
         langs: [language],
       });
 
