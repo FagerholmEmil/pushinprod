@@ -18,8 +18,6 @@ export const FileChat: React.FC<FileChatProps> = ({}) => {
   const { messagesRef, scrollRef, visibilityRef, isAtBottom, scrollToBottom } =
     useScrollAnchor();
 
-  console.log(messages);
-
   return (
     <div className="group w-full overflow-y-auto pl-0" ref={scrollRef}>
       <div className={cn(messages.length > 0 ? 'pt-6' : '')} ref={messagesRef}>

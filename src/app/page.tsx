@@ -47,7 +47,7 @@ const Home: React.FC = () => {
         <Input
           value={repo}
           onChange={(e) => setRepo(e.target.value)}
-          placeholder="imMatheus/vercel-ui..."
+          placeholder="FagerholmEmil/pushinprod..."
           className="relative w-full justify-start mb-4 rounded-[0.5rem] bg-muted/50 text-sm font-normal shadow-none"
         />
 
