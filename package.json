@@ -30,6 +30,7 @@
     "nanoid": "^5.0.7",
     "next": "14.2.13",
     "openai": "^4.65.0",
+    "next-themes": "^0.3.0",
     "react": "^18",
     "react-dom": "^18",
     "react-markdown": "8.0.7",
@@ -37,6 +38,7 @@
     "react-textarea-autosize": "^8.5.3",
     "remark-gfm": "3.0.1",
     "remark-math": "5.1.1",
+    "sonner": "^1.5.0",
     "tailwind-merge": "^2.5.2",
     "tailwindcss-animate": "^1.0.7",
     "zod": "^3.23.8"
