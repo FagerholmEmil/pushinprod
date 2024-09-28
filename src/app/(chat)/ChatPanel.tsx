@@ -5,10 +5,12 @@ import { nanoid } from 'nanoid';
 import { UserMessage } from './UserMessage';
 import { AI } from './actions';
 import { ButtonScrollToBottom } from './ButtonScrollToBottom';
-import { atom, useAtom } from 'jotai';
+import { atom, useAtom, useAtomValue } from 'jotai';
 import { PromptForm } from './PromptForm';
-
-export const selectedFileAtom = atom<string | null>(null);
+import {
+  repoDataAtom,
+  selectedFileAtom,
+} from '../[github-user]/[github-repo]/state';
 
 export interface ChatPanelProps {
   input: string;
@@ -28,12 +30,16 @@ export function ChatPanel({
   const { submitUserMessage } = useActions();
   const [shareDialogOpen, setShareDialogOpen] = React.useState(false);
   const [selectedFile] = useAtom(selectedFileAtom);
+  const data = useAtomValue(repoDataAtom);
+  const fileSource = selectedFile
+    ? data[selectedFile as keyof typeof data]?.source
+    : null;
 
   const exampleMessages = [
     {
       heading: 'Comprehensive Code Review',
       subheading: 'Analyze for quality, performance, and best practices',
-      message: `Perform a thorough code review of the ${selectedFile || 'current file'}. Focus on:
+      message: `Perform a thorough code review of the ${fileSource || 'current file'}. Focus on:
 1. Code quality: Identify unused variables, functions, or dead code.
 2. Performance: Detect inefficient algorithms or unnecessary computations.
 3. Best practices: Suggest improvements for readability, maintainability, and adherence to SOLID principles.
@@ -43,7 +49,7 @@ Prioritize suggestions based on their potential impact and ease of implementatio
     {
       heading: 'Performance & Scalability Audit',
       subheading: 'Optimize for efficiency and future growth',
-      message: `Conduct a performance and scalability audit of the ${selectedFile || 'current file'}. Address the following:
+      message: `Conduct a performance and scalability audit of the ${fileSource || 'current file'}. Address the following:
 1. Algorithmic efficiency: Identify and suggest optimizations for any inefficient algorithms.
 2. Resource usage: Detect potential memory leaks or excessive resource consumption.
 3. Caching & memoization: Recommend areas where caching could improve performance.
@@ -54,7 +60,7 @@ Provide practical, easy-to-implement solutions for each identified issue.`,
     {
       heading: 'Security & Best Practices Assessment',
       subheading: 'Enhance code security and robustness',
-      message: `Perform a security and best practices assessment of the ${selectedFile || 'current file'}. Focus on:
+      message: `Perform a security and best practices assessment of the ${fileSource || 'current file'}. Focus on:
 1. Potential vulnerabilities: Identify risks such as injection flaws, XSS, or CSRF.
 2. Authentication & authorization: Evaluate the strength of user authentication and access control.
 3. Data handling: Assess the security of data storage, transmission, and processing.
@@ -65,7 +71,7 @@ Provide clear, actionable recommendations to address each identified security co
     {
       heading: 'Testing Strategy Evaluation',
       subheading: 'Improve test coverage and quality assurance',
-      message: `Evaluate the testing strategy for the ${selectedFile || 'current file'} and suggest improvements:
+      message: `Evaluate the testing strategy for the ${fileSource || 'current file'} and suggest improvements:
 1. Test coverage: Identify areas lacking sufficient test coverage.
 2. Edge cases: Recommend additional tests for boundary conditions and error scenarios.
 3. Test quality: Assess the effectiveness of existing tests and suggest improvements.
@@ -79,29 +85,17 @@ Provide a prioritized list of testing improvements to enhance overall code relia
   const additionalExampleMessages = exampleMessages.slice(2);
 
   const handleExampleClick = async (message: string) => {
-    const messageWithContext = selectedFile
-      ? `For the file ${selectedFile}, ${message}\n\nHere's the content of the file:\n\`\`\`\n${getFileContent(selectedFile)}\n\`\`\``
-      : `${message}\n\nPlease note that no specific file has been selected. This is a general request for the current project.`;
-
     setMessages((currentMessages) => [
       ...currentMessages,
       {
         id: nanoid(),
-        display: <UserMessage>{messageWithContext}</UserMessage>,
+        display: <UserMessage>{message}</UserMessage>,
       },
     ]);
 
-    const responseMessage = await submitUserMessage(messageWithContext);
+    const responseMessage = await submitUserMessage(message);
 
     setMessages((currentMessages) => [...currentMessages, responseMessage]);
-  };
-
-  // Add this function to get the file content
-  const getFileContent = (filePath: string) => {
-    // Implement this function to return the content of the file
-    // This might involve making an API call to your backend
-    // For now, we'll return a placeholder
-    return "// File content would be here";
   };
 
   return (
