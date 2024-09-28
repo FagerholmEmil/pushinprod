@@ -1,5 +1,5 @@
-import * as React from 'react'
-import type { SVGProps } from 'react'
+import * as React from 'react';
+import type { SVGProps } from 'react';
 
 export const TypeScript = (props: SVGProps<SVGSVGElement>) => (
   <svg
@@ -19,7 +19,7 @@ export const TypeScript = (props: SVGProps<SVGSVGElement>) => (
       fill="#FFF"
     />
   </svg>
-)
+);
 
 export const JavaScript = (props: SVGProps<SVGSVGElement>) => (
   <svg
@@ -35,7 +35,7 @@ export const JavaScript = (props: SVGProps<SVGSVGElement>) => (
       fill="#323330"
     />
   </svg>
-)
+);
 
 export const ReactIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
@@ -51,7 +51,7 @@ export const ReactIcon = (props: SVGProps<SVGSVGElement>) => (
       fill="#00D8FF"
     />
   </svg>
-)
+);
 
 export const HTML5 = (props: SVGProps<SVGSVGElement>) => (
   <svg
@@ -72,7 +72,7 @@ export const HTML5 = (props: SVGProps<SVGSVGElement>) => (
       d="M226 265h69l-7 73-62 17v59l115-32 16-174H226zm0-171v56h136l5-56z"
     />
   </svg>
-)
+);
 
 export const CSS = (props: SVGProps<SVGSVGElement>) => (
   <svg
@@ -93,7 +93,7 @@ export const CSS = (props: SVGProps<SVGSVGElement>) => (
       d="M226 265h69l-7 73-62 17v59l115-32 26-288H226v56h80l-6 58h-74z"
     />
   </svg>
-)
+);
 
 export const Go = (props: SVGProps<SVGSVGElement>) => (
   <svg
@@ -116,7 +116,7 @@ export const Go = (props: SVGProps<SVGSVGElement>) => (
       </g>
     </g>
   </svg>
-)
+);
 
 export const GraphQL = (props: SVGProps<SVGSVGElement>) => (
   <svg
@@ -140,4 +140,4 @@ export const GraphQL = (props: SVGProps<SVGSVGElement>) => (
     <circle cx={14.7659} cy={70.3396} r={8.82} />
     <circle cx={14.7659} cy={29.6605} r={8.82} />
   </svg>
-)
+);

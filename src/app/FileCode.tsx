@@ -1,14 +1,14 @@
-'use client'
+'use client';
 
-import React from 'react'
-import { selectedFileAtom } from './state'
-import { useAtomValue } from 'jotai'
-import { Label } from '@/components/ui/label'
+import React from 'react';
+import { selectedFileAtom } from './state';
+import { useAtomValue } from 'jotai';
+import { Label } from '@/components/ui/label';
 
 interface FileCodeProps {}
 
 export const FileCode: React.FC<FileCodeProps> = ({}) => {
-  const selectedFile = useAtomValue(selectedFileAtom)
+  const selectedFile = useAtomValue(selectedFileAtom);
 
   //   const [code, setCode] = React.useState('')
 
@@ -28,5 +28,5 @@ export const FileCode: React.FC<FileCodeProps> = ({}) => {
         harum.
       </div>
     </div>
-  )
-}
+  );
+};

@@ -1,5 +1,5 @@
-import { Sidebar } from './Sidebar'
-import { KnowledgeTree } from './KnowledgeTree'
+import { Sidebar } from './Sidebar';
+import { KnowledgeTree } from './KnowledgeTree';
 
 export default async function Home() {
   return (
@@ -16,5 +16,5 @@ export default async function Home() {
         </div>
       </main>
     </div>
-  )
+  );
 }
