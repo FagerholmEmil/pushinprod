@@ -15,9 +15,9 @@ import {
 import { useEnterSubmit } from './useEnterSubmit';
 import { nanoid } from 'nanoid';
 import { useRouter } from 'next/navigation';
-import { UserMessage } from './Message';
 import { AI } from './actions';
 import { ChevronRight, Plus } from 'lucide-react';
+import { UserMessage } from './UserMessage';
 
 export function PromptForm({
   input,

@@ -11,14 +11,9 @@ import {
 import { openai } from '@ai-sdk/openai';
 import { customAlphabet } from 'nanoid';
 import { z } from 'zod';
-import {
-  BotCard,
-  BotMessage,
-  SpinnerMessage,
-  SystemMessage,
-  UserMessage,
-} from './Message';
+import { BotCard, BotMessage, SpinnerMessage, SystemMessage } from './Message';
 import { Chat, Message } from './types';
+import { UserMessage } from './UserMessage';
 
 export const nanoid = customAlphabet(
   '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz',

@@ -2,12 +2,11 @@ import * as React from 'react';
 
 import { useAIState, useActions, useUIState } from 'ai/rsc';
 import { nanoid } from 'nanoid';
-import { UserMessage } from './Message';
+import { UserMessage } from './UserMessage';
 import { AI } from './actions';
 import { ButtonScrollToBottom } from './ButtonScrollToBottom';
-import { PromptForm } from './PromtForm';
 import { atom, useAtom } from 'jotai';
-import { Message } from './types';
+import { PromptForm } from './PromptForm';
 
 export const selectedFileAtom = atom<string | null>(null);
 

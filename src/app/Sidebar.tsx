@@ -1,11 +1,10 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import { PanelLeftClose, PanelLeftOpen } from 'lucide-react';
-import React, { useState } from 'react';
+import React from 'react';
 import { FileExplorer } from './FileExplorer';
 import { FileCode } from './FileCode';
-import { FileChat } from './(chat)/FileChat';
+import { FileChat } from '@/app/(chat)/FileChat';
 import {
   ResizableHandle,
   ResizablePanel,
