@@ -79,17 +79,29 @@ Provide a prioritized list of testing improvements to enhance overall code relia
   const additionalExampleMessages = exampleMessages.slice(2);
 
   const handleExampleClick = async (message: string) => {
+    const messageWithContext = selectedFile
+      ? `For the file ${selectedFile}, ${message}\n\nHere's the content of the file:\n\`\`\`\n${getFileContent(selectedFile)}\n\`\`\``
+      : `${message}\n\nPlease note that no specific file has been selected. This is a general request for the current project.`;
+
     setMessages((currentMessages) => [
       ...currentMessages,
       {
         id: nanoid(),
-        display: <UserMessage>{message}</UserMessage>,
+        display: <UserMessage>{messageWithContext}</UserMessage>,
       },
     ]);
 
-    const responseMessage = await submitUserMessage(message);
+    const responseMessage = await submitUserMessage(messageWithContext);
 
     setMessages((currentMessages) => [...currentMessages, responseMessage]);
+  };
+
+  // Add this function to get the file content
+  const getFileContent = (filePath: string) => {
+    // Implement this function to return the content of the file
+    // This might involve making an API call to your backend
+    // For now, we'll return a placeholder
+    return "// File content would be here";
   };
 
   return (
