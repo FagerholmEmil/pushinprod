@@ -25,7 +25,7 @@ export const Sidebar: React.FC<SidebarProps> = ({}) => {
           </div>
         </ResizablePanel>
         <ResizableHandle withHandle />
-        <ResizablePanel className="overflow-y-auto" minSize={10}>
+        <ResizablePanel className="!overflow-y-auto" minSize={10}>
           <FileChat />
         </ResizablePanel>
       </ResizablePanelGroup>

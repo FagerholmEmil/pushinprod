@@ -19,7 +19,9 @@ export default async function Home() {
         <div className="flex gap-2 items-center">
           <OpenExplorerButton />
           <Link href="/animated">
-            <Button variant="default">Scan Codebase</Button>
+            <Button variant="default" size="sm">
+              Scan Codebase
+            </Button>
           </Link>
         </div>
       </header>
