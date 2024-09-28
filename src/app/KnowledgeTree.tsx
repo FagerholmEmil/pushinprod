@@ -21,7 +21,9 @@ const KnowledgeTree: React.FC = () => {
   useEffect(() => {
     if (!svgRef.current) return;
 
-    // Use window dimensions instead of fixed values
+    // Clear any existing content
+    d3.select(svgRef.current).selectAll('*').remove();
+
     const svgWidth = window.innerWidth;
     const svgHeight = window.innerHeight;
 
@@ -29,10 +31,6 @@ const KnowledgeTree: React.FC = () => {
       .attr('width', svgWidth)
       .attr('height', svgHeight);
 
-    // Clear any existing content
-    svg.selectAll('*').remove();
-
-    // Create a group for the graph
     const g = svg.append('g');
 
     // Add zoom behavior
@@ -43,23 +41,6 @@ const KnowledgeTree: React.FC = () => {
       });
 
     svg.call(zoom);
-
-    // Fit the graph to the SVG
-    const fitGraph = () => {
-      const bounds = g.node().getBBox();
-      const fullWidth = svgWidth;
-      const fullHeight = svgHeight;
-      const boundWidth = bounds.width;
-      const boundHeight = bounds.height;
-      const midX = bounds.x + boundWidth / 2;
-      const midY = bounds.y + boundHeight / 2;
-      const scale = 0.8 / Math.max(boundWidth / fullWidth, boundHeight / fullHeight);
-      const translate = [fullWidth / 2 - scale * midX, fullHeight / 2 - scale * midY];
-
-      svg.call(zoom.transform, d3.zoomIdentity
-        .translate(translate[0], translate[1])
-        .scale(scale));
-    };
 
     // Create a Set of all unique node IDs
     const nodeIds = new Set<string>();
@@ -86,25 +67,25 @@ const KnowledgeTree: React.FC = () => {
       });
     });
 
+    // Calculate the degree (number of connections) for each node
+    const nodeDegrees: { [key: string]: number } = {};
+    links.forEach(link => {
+      nodeDegrees[link.source as string] = (nodeDegrees[link.source as string] || 0) + 1;
+      nodeDegrees[link.target as string] = (nodeDegrees[link.target as string] || 0) + 1;
+    });
+
+    // Define a scale for node sizes
+    const nodeScale = d3.scaleLinear()
+      .domain([d3.min(Object.values(nodeDegrees)) || 1, d3.max(Object.values(nodeDegrees)) || 1])
+      .range([6, 50]); // Adjust min and max sizes as needed
+
     const simulation = d3.forceSimulation(nodes)
       .force('link', d3.forceLink(links).id((d: any) => d.id).distance(100))
       .force('charge', d3.forceManyBody().strength(-500))
       .force('center', d3.forceCenter(svgWidth / 2, svgHeight / 2));
 
-    // Create a tooltip
-    const tooltip = d3.select('body').append('div')
-      .attr('class', 'tooltip')
-      .style('position', 'absolute')
-      .style('visibility', 'hidden')
-      .style('background-color', 'black')
-      .style('border', 'solid')
-      .style('border-width', '1px')
-      .style('border-radius', '5px')
-      .style('padding', '10px')
-      .style('color', 'white'); // Add this line to set text color to black
-
-    // Move link and node creation inside the 'g' group
     const link = g.append('g')
+      .attr('class', 'links')
       .selectAll('line')
       .data(links)
       .join('line')
@@ -113,24 +94,108 @@ const KnowledgeTree: React.FC = () => {
       .attr('stroke-width', (d: any) => Math.sqrt(d.value));
 
     const node = g.append('g')
+      .attr('class', 'nodes')
       .selectAll('circle')
       .data(nodes)
       .join('circle')
-      .attr('r', 5)
+      .attr('r', (d: any) => nodeScale(nodeDegrees[d.id] || 1))
       .attr('fill', (d: any) => d3.schemeCategory10[d.group])
-      .on('mouseover', (event: MouseEvent, d: any) => {
-        tooltip.style('visibility', 'visible')
-          .text(d.id);
-      })
-      .on('mousemove', (event: MouseEvent) => {
-        tooltip.style('top', (event.pageY - 10) + 'px')
-          .style('left', (event.pageX + 10) + 'px');
-      })
-      .on('mouseout', () => {
-        tooltip.style('visibility', 'hidden');
-      });
+      .attr('data-id', (d: any) => d.id)
+      .call(drag(simulation));
 
-    simulation.on('end', fitGraph);
+    node.on('click', handleNodeClick);
+
+    // Create a tooltip
+    const tooltip = d3.select('body').append('div')
+      .attr('class', 'tooltip')
+      .style('position', 'absolute')
+      .style('visibility', 'hidden')
+      .style('background-color', 'black')
+      .style('color', 'white')
+      .style('padding', '5px')
+      .style('border-radius', '5px');
+
+    node.on('mouseover', (event: MouseEvent, d: any) => {
+      tooltip.style('visibility', 'visible')
+        .text(`${d.id} (Connections: ${nodeDegrees[d.id] || 0})`)
+        .style('left', (event.pageX + 10) + 'px')
+        .style('top', (event.pageY - 10) + 'px');
+    })
+    .on('mousemove', (event: MouseEvent) => {
+      tooltip.style('left', (event.pageX + 10) + 'px')
+        .style('top', (event.pageY - 10) + 'px');
+    })
+    .on('mouseout', () => {
+      tooltip.style('visibility', 'hidden');
+    });
+
+    function handleNodeClick(event: MouseEvent, d: any) {
+      const clickedNode = d3.select(event.currentTarget);
+      const isSelected = clickedNode.classed('selected');
+
+      // Reset all nodes and links
+      node.attr('fill', (d: any) => d3.schemeCategory10[d.group])
+          .attr('opacity', 1)
+          .classed('selected', false);
+      link.attr('stroke', '#999')
+          .attr('opacity', 0.6);
+
+      if (!isSelected) {
+        // Highlight selected node and its connections
+        clickedNode.classed('selected', true)
+          .attr('fill', '#ff0000');
+
+        const connectedNodes = new Set<string>([d.id]);
+        link.each((l: any) => {
+          if (l.source.id === d.id) connectedNodes.add(l.target.id);
+          if (l.target.id === d.id) connectedNodes.add(l.source.id);
+        });
+
+        node.attr('fill', (n: any) => connectedNodes.has(n.id) ? '#00ff00' : '#808080')
+            .attr('opacity', (n: any) => connectedNodes.has(n.id) ? 1 : 0.3);
+
+        link.attr('stroke', (l: any) => 
+          (l.source.id === d.id || l.target.id === d.id) ? '#ff0000' : '#999'
+        ).attr('opacity', (l: any) => 
+          (l.source.id === d.id || l.target.id === d.id) ? 1 : 0.1
+        );
+      }
+    }
+
+    // Handle Escape key press
+    d3.select('body').on('keydown', (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        node.attr('fill', (d: any) => d3.schemeCategory10[d.group])
+            .attr('opacity', 1)
+            .classed('selected', false);
+        link.attr('stroke', '#999')
+            .attr('opacity', 0.6);
+      }
+    });
+
+    function drag(simulation: d3.Simulation<d3.SimulationNodeDatum, undefined>) {
+      function dragstarted(event: d3.D3DragEvent<any, any, any>) {
+        if (!event.active) simulation.alphaTarget(0.3).restart();
+        event.subject.fx = event.subject.x;
+        event.subject.fy = event.subject.y;
+      }
+
+      function dragged(event: d3.D3DragEvent<any, any, any>) {
+        event.subject.fx = event.x;
+        event.subject.fy = event.y;
+      }
+
+      function dragended(event: d3.D3DragEvent<any, any, any>) {
+        if (!event.active) simulation.alphaTarget(0);
+        event.subject.fx = null;
+        event.subject.fy = null;
+      }
+
+      return d3.drag()
+        .on('start', dragstarted)
+        .on('drag', dragged)
+        .on('end', dragended);
+    }
 
     simulation.on('tick', () => {
       link
