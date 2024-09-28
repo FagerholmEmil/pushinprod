@@ -13,14 +13,14 @@ import {
   CommandList,
   CommandSeparator,
 } from '@/components/ui/command';
-import { useSetAtom } from 'jotai';
-import { selectedFileAtom } from './state';
+import { useAtom, useSetAtom } from 'jotai';
+import { fileExplorerOpenAtom, selectedFileAtom } from './state';
 import { getLogo } from './getFileIcon';
 
 interface FileExplorerProps {}
 
 export const FileExplorer: React.FC<FileExplorerProps> = ({}) => {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useAtom(fileExplorerOpenAtom);
   const setSelectedFile = useSetAtom(selectedFileAtom);
 
   React.useEffect(() => {

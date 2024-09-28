@@ -7,6 +7,7 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from '@/components/ui/resizable';
+import { OpenExplorerButton } from './OpenExplorerButton';
 
 export default async function Home() {
   return (
@@ -15,9 +16,12 @@ export default async function Home() {
         <h1 className="font-medium font-serif text-lg italic">
           Pushin-P<span className="font-black">(rod)</span>
         </h1>
-        <Link href="/animated">
-          <Button variant="default">Scan Codebase</Button>
-        </Link>
+        <div className="flex gap-2 items-center">
+          <OpenExplorerButton />
+          <Link href="/animated">
+            <Button variant="default">Scan Codebase</Button>
+          </Link>
+        </div>
       </header>
       <ResizablePanelGroup
         direction="horizontal"

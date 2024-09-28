@@ -17,11 +17,9 @@ export const Sidebar: React.FC<SidebarProps> = ({}) => {
   return (
     <aside className={cn('flex flex-col overflow-hidden h-full')}>
       <ResizablePanelGroup direction="vertical">
-        <ResizablePanel minSize={10}>
-          <div className="flex-1 p-4 overflow-y-auto">
-            <div className="">
-              <FileExplorer />
-            </div>
+        <ResizablePanel minSize={10} className="!overflow-y-auto">
+          <div className="p-4">
+            <FileExplorer />
 
             <FileCode />
           </div>
