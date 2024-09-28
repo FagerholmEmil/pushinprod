@@ -1,5 +1,6 @@
-'use server';
 // @ts-nocheck
+
+'use server';
 import { Octokit } from '@octokit/rest';
 import fs from 'fs/promises';
 import path from 'path';
