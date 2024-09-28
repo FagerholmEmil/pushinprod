@@ -2,16 +2,6 @@
 
 import React from 'react';
 
-import {
-  Go,
-  HTML5,
-  CSS,
-  JavaScript,
-  ReactIcon,
-  GraphQL,
-  TypeScript,
-} from '@/components/logos';
-
 import data from './data.json';
 
 import {
@@ -22,27 +12,12 @@ import {
   CommandItem,
   CommandList,
   CommandSeparator,
-  CommandShortcut,
 } from '@/components/ui/command';
-import { useAtom, useSetAtom } from 'jotai';
+import { useSetAtom } from 'jotai';
 import { selectedFileAtom } from './state';
-import { FileCode } from 'lucide-react';
+import { getLogo } from './getFileIcon';
 
 interface FileExplorerProps {}
-
-function getLogo(file: string) {
-  if (file.endsWith('.tsx')) return <ReactIcon className="h-3 w-3 mr-2" />;
-  if (file.endsWith('.ts')) return <TypeScript className="h-3 w-3 mr-2" />;
-  if (file.endsWith('.js')) return <JavaScript className="h-3 w-3 mr-2" />;
-  if (file.endsWith('.jsx')) return <JavaScript className="h-3 w-3 mr-2" />;
-  if (file.endsWith('.html')) return <HTML5 className="h-3 w-3 mr-2" />;
-  if (file.endsWith('.css')) return <CSS className="h-3 w-3 mr-2" />;
-  if (file.endsWith('.go')) return <Go className="h-3 w-3 mr-2" />;
-  if (file.endsWith('.gql') || file.endsWith('.graphql'))
-    return <GraphQL className="h-3 w-3 mr-2" />;
-
-  return <FileCode className="h-3 w-3 mr-2" />;
-}
 
 export const FileExplorer: React.FC<FileExplorerProps> = ({}) => {
   const [open, setOpen] = React.useState(false);
@@ -50,7 +25,7 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({}) => {
 
   React.useEffect(() => {
     const down = (e: KeyboardEvent) => {
-      if (e.key === 'j' && (e.metaKey || e.ctrlKey)) {
+      if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
         setOpen((open) => !open);
       }
@@ -62,12 +37,12 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({}) => {
 
   return (
     <>
-      <p className="text-sm text-muted-foreground">
+      {/* <p className="text-sm text-muted-foreground">
         Press{' '}
         <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100">
           <span className="text-xs">⌘</span>J
         </kbd>
-      </p>
+      </p> */}
       <CommandDialog open={open} onOpenChange={setOpen}>
         <CommandInput placeholder="Type a command or search..." />
         <CommandList>
@@ -77,12 +52,7 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({}) => {
               <CommandItem
                 key={file}
                 onSelect={() => {
-                  setSelectedFile(
-                    file.replace(
-                      '/Users/matheus/Desktop/pushinprod/repos/vercel-ui',
-                      ''
-                    )
-                  );
+                  setSelectedFile(file);
                   setOpen(false);
                 }}
               >

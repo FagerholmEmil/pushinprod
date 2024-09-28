@@ -3,6 +3,8 @@
 import React, { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
 import data from './data.json';
+import { selectedFileAtom } from './state';
+import { useSetAtom } from 'jotai';
 
 interface Node {
   id: string;
@@ -17,6 +19,7 @@ interface Link {
 
 export const KnowledgeTree: React.FC = () => {
   const svgRef = useRef<SVGSVGElement>(null);
+  const setSelectedFile = useSetAtom(selectedFileAtom);
 
   useEffect(() => {
     if (!svgRef.current) return;
@@ -152,6 +155,7 @@ export const KnowledgeTree: React.FC = () => {
       });
 
     function handleNodeClick(event: MouseEvent, d: any) {
+      setSelectedFile(d.id);
       const clickedNode = d3.select(event.currentTarget);
       const isSelected = clickedNode.classed('selected');
 

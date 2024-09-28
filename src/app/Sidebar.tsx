@@ -1,13 +1,10 @@
 'use client';
 
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 import { PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import React, { useState } from 'react';
 import { FileExplorer } from './FileExplorer';
-import { useAtom, useAtomValue } from 'jotai';
-import { selectedFileAtom } from './state';
 import { FileCode } from './FileCode';
 
 interface SidebarProps {}
@@ -23,8 +20,8 @@ export const Sidebar: React.FC<SidebarProps> = ({}) => {
       )}
     >
       <div className="flex-1 overflow-y-auto">
-        <div className="flex justify-between">
-          <h1>Ask stuff</h1>
+        <div className="flex justify-end mb-2">
+          {/* <h1>Ask stuff</h1> */}
           {expanded ? (
             <PanelLeftClose
               className="w-4 h-4 cursor-pointer"
@@ -45,7 +42,7 @@ export const Sidebar: React.FC<SidebarProps> = ({}) => {
         <FileCode />
       </div>
 
-      <div className="flex-shrink-0">
+      <div className="flex-shrink-0 mt-3">
         <Input placeholder="Ask stuff" />
       </div>
     </aside>
