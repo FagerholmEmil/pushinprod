@@ -4,7 +4,7 @@
 'use client';
 
 import { FC, memo, useEffect, useState } from 'react';
-import { getHighlighter, Highlighter } from 'shiki';
+import { codeToHtml } from 'shiki';
 
 import { Button } from '@/components/ui/button';
 import { Check, Copy, Download } from 'lucide-react';
@@ -60,25 +60,16 @@ const CodeBlock: FC<Props> = memo(({ language, value }) => {
   const [highlightedCode, setHighlightedCode] = useState<string>('');
 
   useEffect(() => {
-    let highlighter: Highlighter;
-
     const highlight = async () => {
-      highlighter = await getHighlighter({
-        themes: ['github-dark'],
-        langs: [language],
+      const out = await codeToHtml(value, {
+        lang: language,
+        theme: 'vitesse-dark',
       });
 
-      const highlighted = highlighter.codeToHtml(value, { lang: language });
-      setHighlightedCode(highlighted);
+      setHighlightedCode(out);
     };
 
     highlight();
-
-    return () => {
-      if (highlighter) {
-        highlighter.dispose();
-      }
-    };
   }, [language, value]);
 
   const downloadAsFile = () => {
