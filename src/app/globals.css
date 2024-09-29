@@ -12,6 +12,14 @@ nextjs-portal {
   display: none;
 }
 
+body > div.tooltip {
+  display: none;
+}
+
+body > div.tooltip ~ div.tooltip {
+  display: block;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;

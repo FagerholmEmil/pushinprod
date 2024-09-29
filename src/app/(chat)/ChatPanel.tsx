@@ -112,10 +112,8 @@ Provide a prioritized list of testing improvements to enhance overall code relia
         scrollToBottom={scrollToBottom}
       />
 
-      <div className="p-4 sm:p-6 md:p-8">
-        {/* Added padding here */}
+      <div className="p-4">
         <div className="mb-4 grid grid-cols-2 gap-4">
-          {/* Increased gap */}
           {messages.length === 0 && (
             <>
               {visibleExampleMessages.map((example) => (
