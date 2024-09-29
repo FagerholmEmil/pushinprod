@@ -54,16 +54,21 @@ const Home: React.FC = () => {
   };
 
   return (
-    <div className="w-screen h-screen flex justify-center items-center">
+    <div className="w-screen p-4 h-screen relative flex justify-center items-center">
       <div className="w-full max-w-3xl">
-        <h1 className="text-5xl text-center mb-10 font-light italic">
-          Pushin-p<span className="text-blue-500">(rod)</span>
+        <h1 className="text-5xl font-black text-center mb-10 font-serif italic">
+          Pushin-p<span className="text-theme">(rod)</span>
         </h1>
+
+        <div className="animate-blur-bounce absolute -top-5 left-0 w-52 rounded-br-full h-52 bg-gradient-to-tr from-indigo-700 to-rose-600 blur-2xl"></div>
+        <div className="animate-blur-bounce absolute -top-5 -right-5 w-40 h-40 bg-theme blur-2xl"></div>
+        <div className="animate-blur-bounce absolute bottom-0 right-0 w-40 h-40 bg-[#e29578] blur-2xl"></div>
+        <div className="animate-blur-bounce absolute -bottom-10 left-10 w-40 h-40 bg-gradient-to-tr from-amber-400 to-green-700 blur-2xl"></div>
 
         <Input
           value={repo}
           onChange={(e) => setRepo(e.target.value)}
-          placeholder="FagerholmEmil/pushinprod..."
+          placeholder="Example: FagerholmEmil/pushinprod"
           className="relative w-full justify-start mb-4 rounded-[0.5rem] bg-muted/50 text-sm font-normal shadow-none"
         />
 
@@ -74,7 +79,7 @@ const Home: React.FC = () => {
               Getting data
             </>
           ) : (
-            'Search'
+            'Open repo'
           )}
         </Button>
       </div>

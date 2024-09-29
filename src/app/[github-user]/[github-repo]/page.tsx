@@ -1,6 +1,6 @@
 import { Sidebar } from './Sidebar';
 import { KnowledgeTree } from './KnowledgeTree';
-import { Button } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
 import Link from 'next/link';
 import {
   ResizableHandle,
@@ -12,6 +12,7 @@ import { FileSettings } from './FileSettings';
 import { useParams, notFound } from 'next/navigation';
 import { getFileData } from './actions';
 import { AtomHydrate } from './AtomHydrate';
+import { cn } from '@/lib/utils';
 
 export default async function Home({
   params,
@@ -34,16 +35,32 @@ export default async function Home({
     <AtomHydrate data={fileData}>
       <div className="h-screen flex flex-col">
         <header className="border-b p-4 shrink-0 flex justify-between items-center">
-          <Link href="/" className="font-medium font-serif text-lg italic">
-            Pushin-P<span className="font-black">(rod)</span>
-          </Link>
+          <div className="flex items-center">
+            <Link
+              href="/"
+              className="text-lg font-black text-center font-serif italic"
+            >
+              Pushin-p<span className="text-theme">(rod)</span>
+            </Link>
+
+            <span className="text-sm ml-4 tracking-wider italic text-muted-foreground">
+              {githubUser}/{githubRepo}
+            </span>
+          </div>
           <div className="flex gap-2 items-center">
             <OpenExplorerButton />
             <FileSettings />
-            <Link href="/animated">
-              <Button variant="default" size="sm">
-                Scan Codebase
-              </Button>
+            <Link
+              href="/animated"
+              className={cn(
+                buttonVariants({
+                  variant: 'default',
+                  size: 'sm',
+                }),
+                'h-8'
+              )}
+            >
+              Scan Codebase
             </Link>
           </div>
         </header>

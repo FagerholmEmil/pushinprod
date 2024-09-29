@@ -10,6 +10,7 @@ module.exports = {
         sm: 'calc(var(--radius) - 4px)',
       },
       colors: {
+        theme: '#339989',
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         card: {
@@ -56,9 +57,17 @@ module.exports = {
           '0%': { opacity: '1' },
           '100%': { opacity: '0.15' },
         },
+        'blur-bounce': {
+          '0%': { transform: 'translate(0)' },
+          '25%': { transform: 'translate(10px, -10px)' },
+          '50%': { transform: 'translate(-20px, -15px)' },
+          '75%': { transform: 'translate(20px, 0px)' },
+          '100%': { transform: 'translate(30px, 30px)' },
+        },
       },
       animation: {
         'spinner-spin': 'spinner-spin 1.2s linear infinite',
+        'blur-bounce': 'blur-bounce 8s linear infinite alternate',
       },
     },
   },

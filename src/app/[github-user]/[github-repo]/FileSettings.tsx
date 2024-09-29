@@ -37,7 +37,7 @@ export const FileSettings: React.FC<FileSettingsProps> = ({}) => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button size="sm" variant="outline">
+        <Button size="sm" variant="outline" className="h-8">
           Filter
         </Button>
       </DialogTrigger>
