@@ -12,13 +12,13 @@ nextjs-portal {
   display: none;
 }
 
-body > div.tooltip {
+/* body > div.tooltip {
   display: none;
 }
 
 body > div.tooltip ~ div.tooltip {
   display: block;
-}
+} */
 
 @layer base {
   :root {
