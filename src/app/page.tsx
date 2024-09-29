@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import React, { useState } from 'react';
+import React, { Suspense, useState } from 'react';
 import { cloneRepo } from './actions_2';
 import { toast } from 'sonner';
 import { useSearchParams, useRouter } from 'next/navigation';
@@ -82,4 +82,11 @@ const Home: React.FC = () => {
   );
 };
 
-export default Home;
+const HomeSuspense = () => {
+  return (
+    <Suspense>
+      <Home />
+    </Suspense>
+  );
+};
+export default HomeSuspense;
