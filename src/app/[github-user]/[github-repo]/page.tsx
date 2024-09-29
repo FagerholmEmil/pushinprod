@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/resizable';
 import { OpenExplorerButton } from './OpenExplorerButton';
 import { FileSettings } from './FileSettings';
-import { useParams } from 'next/navigation';
+import { useParams, notFound } from 'next/navigation';
 import { getFileData } from './actions';
 import { AtomHydrate } from './AtomHydrate';
 
@@ -18,15 +18,17 @@ export default async function Home({
 }: {
   params: { 'github-user': string; 'github-repo': string };
 }) {
-  console.log('PPPP');
   console.log(params);
 
   const { 'github-user': githubUser, 'github-repo': githubRepo } = params;
 
   const fileData = await getFileData(githubUser, githubRepo);
 
-  console.log({ githubUser, githubRepo });
-  console.log({ fileData });
+  if (!fileData) {
+    console.log('Not found', params);
+
+    notFound();
+  }
 
   return (
     <AtomHydrate data={fileData}>

@@ -4,10 +4,10 @@ import React from 'react';
 import { useHydrateAtoms } from 'jotai/utils';
 
 import { repoDataAtom } from './state';
-import { Provider } from 'jotai';
+import { KnowledgeTree } from '@/types';
 
 interface AtomHydrateProps {
-  data: Record<string, { source: string; dependencies: string[] }>;
+  data: KnowledgeTree;
   children: React.ReactNode;
 }
 

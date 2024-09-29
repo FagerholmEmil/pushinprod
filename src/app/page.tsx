@@ -3,12 +3,21 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import React, { useState } from 'react';
-import { cloneRepo } from './actions';
+import { cloneRepo } from './actions_2';
 import { toast } from 'sonner';
-import { useRouter } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
+import { Spinner } from '@/components/ui/spinner';
 
 const Home: React.FC = () => {
-  const [repo, setRepo] = useState('');
+  const searchParams = useSearchParams();
+
+  const [repo, setRepo] = useState(() => {
+    if (searchParams.get('githubUser') && searchParams.get('githubRepo')) {
+      return `${searchParams.get('githubUser')}/${searchParams.get('githubRepo')}`;
+    }
+
+    return '';
+  });
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
@@ -23,9 +32,16 @@ const Home: React.FC = () => {
         });
         router.push(`/${repo}`);
       } else {
-        toast('Error!', {
-          description: 'Error cloning repo',
-        });
+        if (res.is404) {
+          toast('404', {
+            description:
+              'Repository not found on GitHub. Make sure you spelled it correctly.',
+          });
+        } else {
+          toast('Error!', {
+            description: res.message,
+          });
+        }
       }
     } catch (error) {
       console.error('Error cloning repo:', error);
@@ -52,7 +68,14 @@ const Home: React.FC = () => {
         />
 
         <Button disabled={!repo || loading} onClick={handleCloneRepo}>
-          {loading ? 'Loading...' : 'Search'}
+          {loading ? (
+            <>
+              <Spinner size={16} className="mr-1" />
+              Getting data
+            </>
+          ) : (
+            'Search'
+          )}
         </Button>
       </div>
     </div>
