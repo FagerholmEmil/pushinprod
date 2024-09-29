@@ -45,8 +45,7 @@ export const FileSettings: React.FC<FileSettingsProps> = ({}) => {
         <DialogHeader>
           <DialogTitle>Filter which file extensions to show</DialogTitle>
           <DialogDescription>
-            This action cannot be undone. This will permanently delete your
-            account and remove your data from our servers.
+            Select which types of files you would like to see
           </DialogDescription>
         </DialogHeader>
 
