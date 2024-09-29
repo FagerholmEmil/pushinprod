@@ -5,11 +5,19 @@ import { Input } from '@/components/ui/input';
 import React, { useState } from 'react';
 import { cloneRepo } from './actions_2';
 import { toast } from 'sonner';
-import { useRouter } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { Spinner } from '@/components/ui/spinner';
 
 const Home: React.FC = () => {
-  const [repo, setRepo] = useState('');
+  const searchParams = useSearchParams();
+
+  const [repo, setRepo] = useState(() => {
+    if (searchParams.get('githubUser') && searchParams.get('githubRepo')) {
+      return `${searchParams.get('githubUser')}/${searchParams.get('githubRepo')}`;
+    }
+
+    return '';
+  });
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 

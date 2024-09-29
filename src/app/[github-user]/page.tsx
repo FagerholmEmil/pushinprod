@@ -1,7 +1,9 @@
-import React from 'react';
+'use client';
+
+import { notFound } from 'next/navigation';
 
 function page() {
-  return <div>page</div>;
+  notFound();
 }
 
 export default page;
