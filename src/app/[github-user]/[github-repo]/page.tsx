@@ -74,7 +74,7 @@ export default async function Home({
           <ResizableHandle withHandle />
 
           <ResizablePanel defaultSize={50}>
-            <div className="min-w-0">
+            <div className="min-w-0 h-full">
               <KnowledgeTree />
             </div>
           </ResizablePanel>

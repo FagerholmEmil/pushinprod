@@ -30,7 +30,7 @@ const Home: React.FC = () => {
         toast('Success!', {
           description: 'Successfully cloned repo',
         });
-        router.push(`/${repo}`);
+        router.push(`/${res.owner}/${res.repoName}`);
       } else {
         if (res.is404) {
           toast('404', {
@@ -60,10 +60,10 @@ const Home: React.FC = () => {
           Pushin-p<span className="text-theme">(rod)</span>
         </h1>
 
-        <div className="animate-blur-bounce absolute -top-5 left-0 w-52 rounded-br-full h-52 bg-gradient-to-tr from-indigo-700 to-rose-600 blur-2xl"></div>
-        <div className="animate-blur-bounce absolute -top-5 -right-5 w-40 h-40 bg-theme blur-2xl"></div>
-        <div className="animate-blur-bounce absolute bottom-0 right-0 w-40 h-40 bg-[#e29578] blur-2xl"></div>
-        <div className="animate-blur-bounce absolute -bottom-10 left-10 w-40 h-40 bg-gradient-to-tr from-amber-400 to-green-700 blur-2xl"></div>
+        <div className="[animation-delay:-800ms] animate-blur-bounce absolute -top-5 left-0 w-52 rounded-br-full h-52 bg-gradient-to-tr from-indigo-700 to-rose-600 blur-2xl"></div>
+        <div className="[animation-delay:-500ms] animate-blur-bounce absolute -top-5 -right-5 w-40 h-40 bg-theme blur-2xl"></div>
+        <div className="[animation-delay:-1200ms] animate-blur-bounce absolute bottom-0 right-0 w-40 h-40 bg-[#e29578] blur-2xl"></div>
+        <div className="[animation-delay:-2000ms] animate-blur-bounce absolute -bottom-10 left-10 w-40 h-40 bg-gradient-to-tr from-amber-400 to-green-700 blur-2xl"></div>
 
         <Input
           value={repo}

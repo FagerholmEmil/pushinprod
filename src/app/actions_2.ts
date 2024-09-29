@@ -14,12 +14,59 @@ const octokit = new Octokit({
 export const cloneRepo = async (repo: string) => {
   console.log('Fetching repo');
 
-  let [owner, repoName] = repo.split('/');
+  let owner = '';
+  let repoName = '';
+
+  // Check if the repo is a full GitHub URL
+  if (repo.startsWith('https://github.com/')) {
+    const urlParts = repo.split('/');
+    if (urlParts.length >= 5) {
+      owner = urlParts[urlParts.length - 2];
+      repoName = urlParts[urlParts.length - 1];
+    } else {
+      return {
+        success: false,
+        is404: false,
+        message: 'Invalid GitHub URL format. Use https://github.com/owner/repo',
+      };
+    }
+  } else {
+    [owner, repoName] = repo.split('/');
+  }
+
   if (!owner || !repoName) {
     return {
       success: false,
       is404: false,
-      message: 'Invalid repository format. Use owner/repo',
+      message: 'Invalid repository format. Use owner/repo or full GitHub URL',
+    };
+  }
+
+  const existingRepo = await db
+    .select({
+      id: reposTable.id,
+      github_user: reposTable.github_user,
+      github_repo: reposTable.github_repo,
+    })
+    .from(reposTable)
+    .where(
+      and(
+        eq(reposTable.github_user, owner),
+        eq(reposTable.github_repo, repoName)
+      )
+    )
+    .limit(1);
+
+  if (existingRepo && existingRepo.length > 0) {
+    console.log('Repository already exists in the database.', {
+      owner,
+      repoName,
+    });
+    return {
+      success: true,
+      message: 'Repository already exists in the database!',
+      owner,
+      repoName,
     };
   }
 
@@ -36,37 +83,22 @@ export const cloneRepo = async (repo: string) => {
     };
   }
 
-  const existingRepo = await db
-    .select()
-    .from(reposTable)
-    .where(
-      and(
-        eq(reposTable.github_user, owner),
-        eq(reposTable.github_repo, repoName)
-      )
-    )
-    .limit(1);
-
-  if (existingRepo && existingRepo.length > 0) {
-    console.log('Repository already exists in the database.');
-    return {
-      success: true,
-      message: 'Repository already exists in the database.',
-    };
-  }
-
-  console.log('Owner:', owner, 'Repo:', repoName);
+  console.log('Found found on github', { owner, repoName });
 
   const knowledgeTree: Record<
     string,
     { source: string; dependencies: string[] }
   > = {};
 
+  console.log('Fetching repo content...');
+
   const { data: rootContent } = await octokit.rest.repos.getContent({
     owner,
     repo: repoName,
     path: '',
   });
+
+  console.log('Repo content fetched', { owner, repoName });
 
   async function processContent(item: any) {
     if (item.type === 'file') {
@@ -111,20 +143,26 @@ export const cloneRepo = async (repo: string) => {
       });
 
       if (Array.isArray(dirContent)) {
-        for (const subItem of dirContent) {
-          await processContent(subItem);
+        for (let i = 0; i < dirContent.length; i += 10) {
+          const batch = dirContent.slice(i, i + 10);
+          console.log('Processing batch', { i, file: batch[0].path });
+
+          await Promise.all(batch.map((subItem) => processContent(subItem)));
         }
       }
     }
   }
 
   if (Array.isArray(rootContent)) {
-    for (const item of rootContent) {
-      await processContent(item);
+    for (let i = 0; i < rootContent.length; i += 10) {
+      const batch = rootContent.slice(i, i + 10);
+      console.log('Processing batch', { i, file: batch[0].path });
+
+      await Promise.all(batch.map((item) => processContent(item)));
     }
   }
 
-  console.log('saving to db', { owner, repoName });
+  console.log('Saving to db', { owner, repoName });
 
   await db.insert(reposTable).values({
     github_user: owner,
@@ -134,5 +172,5 @@ export const cloneRepo = async (repo: string) => {
 
   console.log('Added to db');
 
-  return { success: true };
+  return { success: true, owner, repoName };
 };
