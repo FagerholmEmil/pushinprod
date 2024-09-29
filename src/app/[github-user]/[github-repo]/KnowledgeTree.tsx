@@ -103,6 +103,12 @@ export const KnowledgeTree: React.FC = () => {
         (nodeDegrees[link.target as string] || 0) + 1;
     });
 
+    // Find the node with the highest degree
+    const centerNodeId = Object.entries(nodeDegrees).reduce(
+      (max, [id, degree]) => (degree > max[1] ? [id, degree] : max),
+      ['', 0]
+    )[0];
+
     // Define a scale for node sizes
     const nodeScale = d3
       .scaleLinear()
@@ -122,7 +128,16 @@ export const KnowledgeTree: React.FC = () => {
           .distance(100)
       )
       .force('charge', d3.forceManyBody().strength(-500))
-      .force('center', d3.forceCenter(svgWidth / 2, svgHeight / 2));
+      .force('center', d3.forceCenter(svgWidth / 2, svgHeight / 2))
+      .force('x', d3.forceX(svgWidth / 2).strength(0.1))
+      .force('y', d3.forceY(svgHeight / 2).strength(0.1));
+
+    // Set the position of the center node
+    const centerNode = nodes.find((n) => n.id === centerNodeId);
+    if (centerNode) {
+      centerNode.fx = svgWidth / 4;
+      centerNode.fy = svgHeight / 2;
+    }
 
     const link = g
       .append('g')
