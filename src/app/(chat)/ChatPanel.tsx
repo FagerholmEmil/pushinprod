@@ -107,7 +107,7 @@ Provide a prioritized list of testing improvements to enhance overall code relia
   };
 
   return (
-    <div className="w-full bg-gradient-to-b from-muted/30 from-0% to-muted/30 to-50% duration-300 ease-in-out animate-in dark:from-background/10 dark:from-10% dark:to-background/80">
+    <div className="w-full bg-gradient-to-b sticky bottom-0 from-muted/30 from-0% to-muted/30 to-50% duration-300 ease-in-out animate-in dark:from-background/10 dark:from-10% dark:to-background/80">
       <ButtonScrollToBottom
         isAtBottom={isAtBottom}
         scrollToBottom={scrollToBottom}
@@ -135,9 +135,8 @@ Provide a prioritized list of testing improvements to enhance overall code relia
             </>
           )}
         </div>
-        <div className="sticky bottom-0">
-          <PromptForm input={input} setInput={setInput} />
-        </div>
+
+        <PromptForm input={input} setInput={setInput} />
       </div>
     </div>
   );

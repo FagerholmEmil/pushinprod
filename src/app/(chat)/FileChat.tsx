@@ -19,12 +19,16 @@ export const FileChat: React.FC<FileChatProps> = ({}) => {
     useScrollAnchor();
 
   return (
-    <div className="group w-full overflow-y-auto pl-0" ref={scrollRef}>
+    <div
+      className="group w-full relative h-full overflow-y-auto pl-0"
+      ref={scrollRef}
+    >
       <div className={cn(messages.length > 0 ? 'pt-6' : '')} ref={messagesRef}>
         {messages.length ? (
           <ChatList messages={messages} isShared={false} />
         ) : // <EmptyScreen />
         null}
+
         <div className="w-full h-px" ref={visibilityRef} />
       </div>
       <ChatPanel

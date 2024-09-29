@@ -3,12 +3,13 @@
 
 'use client';
 
-import { FC, memo, useEffect, useState } from 'react';
+import React, { FC, memo, useEffect, useState } from 'react';
 import { codeToHtml } from 'shiki';
 
 import { Button } from '@/components/ui/button';
 import { Check, Copy, Download } from 'lucide-react';
 import { useCopyToClipboard } from './useCopyToClipboard';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface Props {
   language: string;
@@ -46,6 +47,12 @@ export const programmingLanguages: languageMap = {
   // add more file extensions here, make sure the key is same as language prop in CodeBlock.tsx component
 };
 
+// const shiki = createHighlighterCoreSync({
+//   themes: [nord],
+//   langs: [js],
+//   engine: createJavaScriptRegexEngine(),
+// });
+
 export const generateRandomString = (length: number, lowercase = false) => {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXY3456789'; // excluding similar looking characters like Z, 2, I, 1, O, 0
   let result = '';
@@ -57,20 +64,27 @@ export const generateRandomString = (length: number, lowercase = false) => {
 
 const CodeBlock: FC<Props> = memo(({ language, value }) => {
   const { isCopied, copyToClipboard } = useCopyToClipboard({ timeout: 2000 });
-  const [highlightedCode, setHighlightedCode] = useState<string>('');
+  // const highlightedCode = shiki.codeToHtml(value, {
+  //   lang: language,
+  //   theme: 'nord',
+  // });
 
-  useEffect(() => {
-    const highlight = async () => {
-      const out = await codeToHtml(value, {
-        lang: language,
-        theme: 'vitesse-dark',
-      });
+  // const [highlightedCode, setHighlightedCode] = useState<string>('');
 
-      setHighlightedCode(out);
-    };
+  // const [highlightedCode, setHighlightedCode] = useState<string>('');
 
-    highlight();
-  }, [language, value]);
+  // useEffect(() => {
+  //   const highlight = async () => {
+  //     const out = await codeToHtml(value, {
+  //       lang: language,
+  //       theme: 'vitesse-dark',
+  //     });
+
+  //     setHighlightedCode(out);
+  //   };
+
+  //   highlight();
+  // }, [language, value]);
 
   const downloadAsFile = () => {
     if (typeof window === 'undefined') {
@@ -106,7 +120,7 @@ const CodeBlock: FC<Props> = memo(({ language, value }) => {
   };
 
   return (
-    <div className="relative w-full font-sans codeblock bg-zinc-950">
+    <div className="relative not-prose w-full mb-2 font-sans codeblock bg-zinc-950">
       <div className="flex items-center justify-between w-full px-3 py-1 bg-muted">
         <span className="text-xs lowercase">{language}</span>
         <div className="flex items-center space-x-1">
@@ -134,13 +148,33 @@ const CodeBlock: FC<Props> = memo(({ language, value }) => {
           </Button>
         </div>
       </div>
-      <div
-        className="[&>pre]:overflow-x-auto [&>pre]:p-4 text-xs"
-        dangerouslySetInnerHTML={{ __html: highlightedCode }}
-      />
+
+      <React.Suspense fallback={<Skeleton className="w-full h-80" />}>
+        <CodeBlock2 source={value} fileExtension={language} />
+      </React.Suspense>
     </div>
   );
 });
+
+const CodeBlock2 = async ({
+  source,
+  fileExtension,
+}: {
+  source: string;
+  fileExtension: string;
+}) => {
+  const out = await codeToHtml(source, {
+    lang: fileExtension,
+    theme: 'vitesse-dark',
+  });
+
+  return (
+    <div
+      dangerouslySetInnerHTML={{ __html: out }}
+      className="[&>pre]:overflow-x-auto [&>pre]:p-4 text-xs"
+    />
+  );
+};
 
 CodeBlock.displayName = 'CodeBlock';
 

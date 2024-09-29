@@ -178,15 +178,16 @@ export const KnowledgeTree: React.FC = () => {
 
     // Create a tooltip
     const tooltip = d3
-      .select('body')
+      .select('#knowledge-tree')
       .append('div')
       .attr('class', 'tooltip')
       .style('position', 'absolute')
       .style('visibility', 'hidden')
-      .style('background-color', 'black')
-      .style('color', 'white')
+      .style('background-color', 'hsl(var(--secondary))')
+      .style('color', 'hsl(var(--foreground))')
       .style('padding', '5px')
-      .style('border-radius', '5px');
+      .style('font-size', '13px')
+      .style('border-radius', '4px');
 
     node
       .on('mouseover', (event: MouseEvent, d: any) => {
@@ -295,7 +296,7 @@ export const KnowledgeTree: React.FC = () => {
   }, [setSelectedFile, allowedFileExtensions]);
 
   return (
-    <div className="w-screen h-screen bg-black">
+    <div className="w-full h-full overflow-hidden bg-black" id="knowledge-tree">
       <svg ref={svgRef} className="w-full h-full"></svg>
     </div>
   );

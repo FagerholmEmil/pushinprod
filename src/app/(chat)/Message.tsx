@@ -22,13 +22,18 @@ export function BotMessage({
   const text = useStreamableText(content);
 
   return (
-    <div className={cn('group relative flex items-start', className)}>
+    <div
+      className={cn(
+        'group prose prose-sm relative flex items-start ![&>*:first-child]:mt-0',
+        className
+      )}
+    >
       <div className="flex size-[24px] shrink-0 select-none items-center justify-center rounded-md border bg-primary text-primary-foreground shadow-sm">
         <Bot />
       </div>
       <div className="ml-4 flex-1 space-y-2 overflow-hidden px-1">
         <MemoizedReactMarkdown
-          className="prose break-words dark:prose-invert prose-p:leading-relaxed prose-pre:p-0"
+          className="prose break-words [&>*:first-child]:!mt-0 dark:prose-invert prose-p:leading-relaxed prose-pre:p-0"
           remarkPlugins={[remarkGfm, remarkMath]}
           components={{
             p({ children }) {
