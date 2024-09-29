@@ -11,6 +11,7 @@ import {
   repoDataAtom,
   selectedFileAtom,
 } from '../[github-user]/[github-repo]/state';
+import { cn } from '@/lib/utils';
 
 export interface ChatPanelProps {
   input: string;
@@ -154,7 +155,10 @@ function ExampleMessageCard({
 }) {
   return (
     <div
-      className={`cursor-pointer rounded-lg border bg-white p-4 hover:bg-zinc-50 dark:bg-zinc-950 dark:hover:bg-zinc-900 ${className}`}
+      className={cn(
+        'cursor-pointer transition-colors rounded-lg p-3 bg-secondary/40 hover:bg-secondary/70',
+        className
+      )}
       onClick={() => onClick(example.message)}
     >
       <div className="text-sm font-semibold mb-1">{example.heading}</div>
