@@ -25,7 +25,7 @@ export const FileCode: React.FC<FileCodeProps> = ({}) => {
           className="relative h-14 w-full justify-start rounded-[0.5rem] bg-muted/50 text-sm font-normal text-muted-foreground shadow-none w-full"
           onClick={() => setOpen(true)}
         >
-          Open a file
+          Open file
           <kbd className="pointer-events-none absolute right-[0.3rem] top-[0.3rem] hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex">
             <span className="text-xs">⌘</span>K
           </kbd>

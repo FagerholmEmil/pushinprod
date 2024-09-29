@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/resizable';
 import { OpenExplorerButton } from './OpenExplorerButton';
 import { FileSettings } from './FileSettings';
-import { useParams } from 'next/navigation';
+import { useParams, notFound } from 'next/navigation';
 import { getFileData } from './actions';
 import { AtomHydrate } from './AtomHydrate';
 
@@ -27,6 +27,10 @@ export default async function Home({
 
   console.log({ githubUser, githubRepo });
   console.log({ fileData });
+
+  if (!fileData) {
+    notFound();
+  }
 
   return (
     <AtomHydrate data={fileData}>

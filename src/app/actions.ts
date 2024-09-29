@@ -1,4 +1,4 @@
-// @ts-nocheck
+//@ts-nocheck
 'use server';
 
 import { exec } from 'child_process';
@@ -7,6 +7,8 @@ import fs from 'fs';
 import path from 'path';
 import { parse } from '@babel/parser';
 import traverse from '@babel/traverse';
+import { db } from '@/lib/supabase/db';
+import { reposTable } from '@/lib/supabase/schema';
 
 const execAsync = promisify(exec);
 const readFileAsync = promisify(fs.readFile);
@@ -115,4 +117,14 @@ export const cloneRepo = async (repo: string) => {
   console.log(`Knowledge tree written to ${outputPath}`);
 
   return { success: true };
+};
+
+export const saveRepo = async (repo: string) => {
+  const res = await db
+    .insert(reposTable)
+    .values({ github_repo: 'abc', github_user: 'def' });
+
+  console.log(res);
+
+  return res;
 };

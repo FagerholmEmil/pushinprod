@@ -1,11 +1,27 @@
 'use server';
 
-import fs from 'fs';
-import path from 'path';
+import { db } from '@/lib/supabase/db';
+import { reposTable } from '@/lib/supabase/schema';
+import { KnowledgeTree } from '@/types';
+import { and, eq } from 'drizzle-orm';
 
 export async function getFileData(githubUser: string, githubRepo: string) {
-  const fileName = `${githubUser}-${githubRepo}.json`;
-  const filePath = path.join(process.cwd(), 'knowledge-tree', fileName);
-  const fileContent = fs.readFileSync(filePath, 'utf8');
-  return JSON.parse(fileContent);
+  const data = await db
+    .select()
+    .from(reposTable)
+    .where(
+      and(
+        eq(reposTable.github_user, githubUser),
+        eq(reposTable.github_repo, githubRepo)
+      )
+    )
+    .limit(1);
+
+  const firstRow = data[0];
+
+  if (!firstRow) {
+    return null;
+  }
+
+  return firstRow.knowledge_tree as KnowledgeTree;
 }

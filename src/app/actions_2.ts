@@ -1,11 +1,11 @@
-// @ts-nocheck
-
 'use server';
+
 import { Octokit } from '@octokit/rest';
-import fs from 'fs/promises';
-import path from 'path';
 import { parse } from '@babel/parser';
 import traverse from '@babel/traverse';
+import { db } from '@/lib/supabase/db';
+import { reposTable } from '@/lib/supabase/schema';
+import { and, eq } from 'drizzle-orm';
 
 const octokit = new Octokit({
   auth: process.env.GITHUB_AUTH_TOKEN, // Add your auth token here
@@ -16,14 +16,59 @@ export const cloneRepo = async (repo: string) => {
 
   let [owner, repoName] = repo.split('/');
   if (!owner || !repoName) {
-    throw new Error('Invalid repository format. Use owner/repo');
+    return {
+      success: false,
+      is404: false,
+      message: 'Invalid repository format. Use owner/repo',
+    };
+  }
+
+  try {
+    await octokit.rest.repos.get({
+      owner,
+      repo: repoName,
+    });
+  } catch (error) {
+    return {
+      success: false,
+      is404: true,
+      message: 'Repository not found on GitHub.',
+    };
+  }
+
+  const existingRepo = await db
+    .select()
+    .from(reposTable)
+    .where(
+      and(
+        eq(reposTable.github_user, owner),
+        eq(reposTable.github_repo, repoName)
+      )
+    )
+    .limit(1);
+
+  if (existingRepo && existingRepo.length > 0) {
+    console.log('Repository already exists in the database.');
+    return {
+      success: true,
+      message: 'Repository already exists in the database.',
+    };
   }
 
   console.log('Owner:', owner, 'Repo:', repoName);
 
-  const knowledgeTree = {};
+  const knowledgeTree: Record<
+    string,
+    { source: string; dependencies: string[] }
+  > = {};
 
-  async function processContent(item) {
+  const { data: rootContent } = await octokit.rest.repos.getContent({
+    owner,
+    repo: repoName,
+    path: '',
+  });
+
+  async function processContent(item: any) {
     if (item.type === 'file') {
       const { data: fileContent } = await octokit.rest.repos.getContent({
         owner,
@@ -31,10 +76,13 @@ export const cloneRepo = async (repo: string) => {
         path: item.path,
       });
 
-      const content = Buffer.from(fileContent.content, 'base64').toString(
-        'utf-8'
-      );
-      let dependencies = [];
+      let content = '';
+
+      if ('content' in fileContent) {
+        content = Buffer.from(fileContent.content, 'base64').toString('utf-8');
+      }
+
+      let dependencies: string[] = [];
 
       if (
         ['.js', '.ts', '.tsx', '.jsx'].some((ext) => item.path.endsWith(ext))
@@ -62,32 +110,29 @@ export const cloneRepo = async (repo: string) => {
         path: item.path,
       });
 
-      for (const subItem of dirContent) {
-        await processContent(subItem);
+      if (Array.isArray(dirContent)) {
+        for (const subItem of dirContent) {
+          await processContent(subItem);
+        }
       }
     }
   }
 
-  const { data: rootContent } = await octokit.rest.repos.getContent({
-    owner,
-    repo: repoName,
-    path: '',
-  });
-
-  for (const item of rootContent) {
-    await processContent(item);
+  if (Array.isArray(rootContent)) {
+    for (const item of rootContent) {
+      await processContent(item);
+    }
   }
 
-  const fileName = `${owner}-${repoName}.json`;
-  const outputPath = path.join('knowledge-tree', fileName);
+  console.log('saving to db', { owner, repoName });
 
-  console.log('writing json response');
-  const _path = path.join('/tmp', 'knowledge-tree');
+  await db.insert(reposTable).values({
+    github_user: owner,
+    github_repo: repoName,
+    knowledge_tree: JSON.stringify(knowledgeTree),
+  });
 
-  await fs.mkdir(_path, { recursive: true });
-  await fs.writeFile(path.join(_path, fileName), JSON.stringify(knowledgeTree, null, 2));
-
-  console.log(`Knowledge tree written to ${path.join(_path, fileName)}`);
+  console.log('Added to db');
 
   return { success: true };
 };

@@ -51,6 +51,15 @@ module.exports = {
           5: 'hsl(var(--chart-5))',
         },
       },
+      keyframes: {
+        'spinner-spin': {
+          '0%': { opacity: '1' },
+          '100%': { opacity: '0.15' },
+        },
+      },
+      animation: {
+        'spinner-spin': 'spinner-spin 1.2s linear infinite',
+      },
     },
   },
   plugins: [require('tailwindcss-animate')],

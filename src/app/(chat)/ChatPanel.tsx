@@ -5,7 +5,7 @@ import { nanoid } from 'nanoid';
 import { UserMessage } from './UserMessage';
 import { AI } from './actions';
 import { ButtonScrollToBottom } from './ButtonScrollToBottom';
-import { atom, useAtom, useAtomValue } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
 import { PromptForm } from './PromptForm';
 import {
   repoDataAtom,
