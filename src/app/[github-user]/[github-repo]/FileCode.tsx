@@ -9,9 +9,9 @@ import { getLogo } from './getFileIcon';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 
-interface FileCodeProps {}
+interface FileCodeProps { }
 
-export const FileCode: React.FC<FileCodeProps> = ({}) => {
+export const FileCode: React.FC<FileCodeProps> = ({ }) => {
   const data = useAtomValue(repoDataAtom);
   const selectedFile = useAtomValue(selectedFileAtom);
   const file = selectedFile ? data[selectedFile as keyof typeof data] : null;
@@ -25,8 +25,8 @@ export const FileCode: React.FC<FileCodeProps> = ({}) => {
         onClick={() => setOpen(true)}
       >
         Open file
-        <kbd className="pointer-events-none absolute right-[0.3rem] top-[0.3rem] hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex">
-          <span className="text-xs">⌘</span>K
+        <kbd className="pointer-events-none absolute right-[0.3rem] top-[0.3rem] hidden h-5 select-none rounded border bg-muted px-1.5 font-mono text-xs font-medium opacity-100 sm:flex sm:items-center">
+          <span className="mr-0.5">⌘</span>K
         </kbd>
       </Button>
     );
