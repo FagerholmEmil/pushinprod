@@ -4,23 +4,11 @@
 'use client';
 
 import React, { FC } from 'react';
-import { createHighlighterCoreSync, createJavaScriptRegexEngine } from 'shiki';
 
 import { Button } from '@/components/ui/button';
 import { Check, Copy, Download } from 'lucide-react';
 import { useCopyToClipboard } from './useCopyToClipboard';
-import { Skeleton } from '@/components/ui/skeleton';
-
-import js from 'shiki/langs/javascript.mjs';
-import ts from 'shiki/langs/typescript.mjs';
-import css from 'shiki/langs/css.mjs';
-import html from 'shiki/langs/html.mjs';
-import json from 'shiki/langs/json.mjs';
-import markdown from 'shiki/langs/markdown.mjs';
-import python from 'shiki/langs/python.mjs';
-import bash from 'shiki/langs/bash.mjs';
-import sql from 'shiki/langs/sql.mjs';
-import vitesseDark from 'shiki/themes/vitesse-dark.mjs';
+import { highlightCode } from '@/lib/highlightCode';
 
 interface Props {
   language: string;
@@ -58,12 +46,6 @@ export const programmingLanguages: languageMap = {
   // add more file extensions here, make sure the key is same as language prop in CodeBlock.tsx component
 };
 
-const shiki = createHighlighterCoreSync({
-  themes: [vitesseDark],
-  langs: [js, ts, css, html, json, markdown, python, bash, sql],
-  engine: createJavaScriptRegexEngine(),
-});
-
 export const generateRandomString = (length: number, lowercase = false) => {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXY3456789'; // excluding similar looking characters like Z, 2, I, 1, O, 0
   let result = '';
@@ -76,10 +58,7 @@ export const generateRandomString = (length: number, lowercase = false) => {
 export const CodeBlock: FC<Props> = ({ language, value }) => {
   const { isCopied, copyToClipboard } = useCopyToClipboard({ timeout: 2000 });
 
-  const highlightedCode = shiki.codeToHtml(value, {
-    lang: language,
-    theme: 'vitesse-dark',
-  });
+  const highlightedCode = highlightCode(value, language);
 
   const downloadAsFile = () => {
     if (typeof window === 'undefined') {

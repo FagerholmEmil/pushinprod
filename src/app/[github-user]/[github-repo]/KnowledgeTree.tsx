@@ -24,8 +24,6 @@ interface Link {
 export const KnowledgeTree: React.FC = () => {
   const data = useAtomValue(repoDataAtom);
 
-  console.log({ data });
-
   const svgRef = useRef<SVGSVGElement>(null);
   const setSelectedFile = useSetAtom(selectedFileAtom);
 
@@ -68,7 +66,7 @@ export const KnowledgeTree: React.FC = () => {
       .filter(
         (file) =>
           allowedFileExtensions.length === 0 ||
-          allowedFileExtensions.includes(file.split('.').pop() || '')
+          allowedFileExtensions.includes(file?.split('.').pop() || '')
       )
       .forEach((file) => {
         nodeIds.add(file);
@@ -87,7 +85,7 @@ export const KnowledgeTree: React.FC = () => {
       .filter(
         ([file]) =>
           allowedFileExtensions.length === 0 ||
-          allowedFileExtensions.includes(file.split('.').pop() || '')
+          allowedFileExtensions.includes(file?.split('.').pop() || '')
       )
       .forEach(([file, { dependencies }]) => {
         dependencies.forEach((dep) => {
@@ -158,7 +156,7 @@ export const KnowledgeTree: React.FC = () => {
     };
 
     const getNodeColor = (id: string) => {
-      const extension = id.split('.').pop()?.toLowerCase();
+      const extension = id?.split('.').pop()?.toLowerCase();
       return fileExtensions[extension] || '#95a5a6'; // Default to gray
     };
 

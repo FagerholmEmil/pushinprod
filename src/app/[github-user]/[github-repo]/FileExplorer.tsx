@@ -57,19 +57,10 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({}) => {
               >
                 {getLogo(file)}
                 <p className="mr-1 break-keep text-sm">
-                  {file
-                    .replace(
-                      '/Users/matheus/Desktop/pushinprod/repos/vercel-ui',
-                      ''
-                    )
-                    .split('/')
-                    .pop()}
+                  {file?.split('/').pop()}
                 </p>
                 <span className="text-muted-foreground leading-3 text-[10px]">
-                  {file.replace(
-                    '/Users/matheus/Desktop/pushinprod/repos/vercel-ui',
-                    ''
-                  )}
+                  {file}
                 </span>
               </CommandItem>
             ))}

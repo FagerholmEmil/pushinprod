@@ -3,15 +3,14 @@
 import React from 'react';
 import { fileExplorerOpenAtom, repoDataAtom, selectedFileAtom } from './state';
 import { useAtomValue, useSetAtom } from 'jotai';
-import { codeToHtml } from 'shiki';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { getLogo } from './getFileIcon';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
+import { ErrorBoundary } from 'react-error-boundary';
+import { CodeBlock } from './CodeBlock';
 
-interface FileCodeProps { }
-
-export const FileCode: React.FC<FileCodeProps> = ({ }) => {
+export const FileCode: React.FC = () => {
   const data = useAtomValue(repoDataAtom);
   const selectedFile = useAtomValue(selectedFileAtom);
   const file = selectedFile ? data[selectedFile as keyof typeof data] : null;
@@ -31,7 +30,7 @@ export const FileCode: React.FC<FileCodeProps> = ({ }) => {
       </Button>
     );
 
-  const fileExtension = selectedFile.split('.').pop() || 'js';
+  const fileExtension = selectedFile?.split('.').pop() || 'javascript';
 
   return (
     <div>
@@ -43,32 +42,15 @@ export const FileCode: React.FC<FileCodeProps> = ({ }) => {
           {selectedFile}
         </AlertDescription>
       </Alert>
-      <React.Suspense
-        key={selectedFile}
-        fallback={<Skeleton className="w-full h-80" />}
-      >
-        <CodeBlock source={file.source} fileExtension={fileExtension} />
-      </React.Suspense>
+
+      <ErrorBoundary fallback={<div>Something went wrong</div>}>
+        <React.Suspense
+          key={selectedFile}
+          fallback={<Skeleton className="w-full h-80" />}
+        >
+          <CodeBlock source={file.source} fileExtension={fileExtension} />
+        </React.Suspense>
+      </ErrorBoundary>
     </div>
-  );
-};
-
-const CodeBlock = async ({
-  source,
-  fileExtension,
-}: {
-  source: string;
-  fileExtension: string;
-}) => {
-  const out = await codeToHtml(source, {
-    lang: fileExtension,
-    theme: 'vitesse-dark',
-  });
-
-  return (
-    <div
-      dangerouslySetInnerHTML={{ __html: out }}
-      className="[&>pre]:overflow-x-auto [&>pre]:p-4 text-xs"
-    />
   );
 };

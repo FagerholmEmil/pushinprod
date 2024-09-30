@@ -24,7 +24,7 @@ export const FileSettings: React.FC<FileSettingsProps> = ({}) => {
     () =>
       (
         Array.from(
-          new Set(Object.keys(data).map((file) => file.split('.').pop()))
+          new Set(Object.keys(data).map((file) => file?.split('.').pop()))
         ) ?? []
       ).filter((ext) => ext !== undefined),
     [data]
