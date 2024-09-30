@@ -55,7 +55,12 @@ export const KnowledgeTree: React.FC = () => {
         g.attr('transform', event.transform);
       });
 
-    svg.call(zoom);
+    // Modify the initial zoom and transform
+    const initialScale = 0.3; // Adjust this value to set the initial zoom level
+    const initialTransform = d3.zoomIdentity
+      .translate(svgWidth / 4, svgHeight / 2)
+      .scale(initialScale);
+    svg.call(zoom).call(zoom.transform, initialTransform);
 
     // Create a Set of all unique node IDs
     const nodeIds = new Set<string>();
@@ -118,6 +123,7 @@ export const KnowledgeTree: React.FC = () => {
       ])
       .range([6, 50]); // Adjust min and max sizes as needed
 
+    // Modify the force simulation
     const simulation = d3
       .forceSimulation(nodes)
       .force(
@@ -128,16 +134,9 @@ export const KnowledgeTree: React.FC = () => {
           .distance(100)
       )
       .force('charge', d3.forceManyBody().strength(-500))
-      .force('center', d3.forceCenter(svgWidth / 2, svgHeight / 2))
-      .force('x', d3.forceX(svgWidth / 2).strength(0.1))
-      .force('y', d3.forceY(svgHeight / 2).strength(0.1));
-
-    // Set the position of the center node
-    const centerNode = nodes.find((n) => n.id === centerNodeId);
-    if (centerNode) {
-      centerNode.fx = svgWidth / 4;
-      centerNode.fy = svgHeight / 2;
-    }
+      .force('center', d3.forceCenter(0, 0)) // Center force at (0, 0)
+      .force('x', d3.forceX(0).strength(0.1)) // X force towards center
+      .force('y', d3.forceY(0).strength(0.1)); // Y force towards center
 
     const link = g
       .append('g')
@@ -284,6 +283,7 @@ export const KnowledgeTree: React.FC = () => {
         .on('end', dragended);
     }
 
+    // Modify the tick function to translate all nodes and links
     simulation.on('tick', () => {
       link
         .attr('x1', (d: any) => d.source.x)
