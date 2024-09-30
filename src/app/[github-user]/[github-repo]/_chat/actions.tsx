@@ -2,7 +2,6 @@ import 'server-only';
 
 import {
   createAI,
-  createStreamableUI,
   getMutableAIState,
   getAIState,
   streamUI,
@@ -11,7 +10,7 @@ import {
 import { openai } from '@ai-sdk/openai';
 import { customAlphabet } from 'nanoid';
 import { z } from 'zod';
-import { BotCard, BotMessage, SpinnerMessage, SystemMessage } from './Message';
+import { BotCard, BotMessage, SpinnerMessage } from './Message';
 import { Chat, Message } from './types';
 import { UserMessage } from './UserMessage';
 
@@ -19,71 +18,6 @@ export const nanoid = customAlphabet(
   '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz',
   7
 ); // 7-character random string
-
-async function confirmPurchase(symbol: string, price: number, amount: number) {
-  'use server';
-
-  const aiState = getMutableAIState<typeof AI>();
-
-  const purchasing = createStreamableUI(
-    <div className="inline-flex items-start gap-1 md:items-center">
-      <p>loading...</p>
-      <p className="mb-2">
-        Purchasing {amount} ${symbol}...
-      </p>
-    </div>
-  );
-
-  const systemMessage = createStreamableUI(null);
-
-  purchasing.update(
-    <div className="inline-flex items-start gap-1 md:items-center">
-      <p>loading...</p>
-
-      <p className="mb-2">
-        Purchasing {amount} ${symbol}... working on it...
-      </p>
-    </div>
-  );
-
-  purchasing.done(
-    <div>
-      <p className="mb-2">
-        You have successfully purchased {amount} ${symbol}. Total cost:{' '}
-        {amount * price}
-      </p>
-    </div>
-  );
-
-  systemMessage.done(
-    <SystemMessage>
-      You have purchased {amount} shares of {symbol} at ${price}. Total cost ={' '}
-      {amount * price}.
-    </SystemMessage>
-  );
-
-  aiState.done({
-    ...aiState.get(),
-    messages: [
-      ...aiState.get().messages,
-      {
-        id: nanoid(),
-        role: 'system',
-        content: `[User has purchased ${amount} shares of ${symbol} at ${price}. Total cost = ${
-          amount * price
-        }]`,
-      },
-    ],
-  });
-
-  return {
-    purchasingUI: purchasing.value,
-    newMessage: {
-      id: nanoid(),
-      display: systemMessage.value,
-    },
-  };
-}
 
 async function submitUserMessage(content: string) {
   'use server';
@@ -181,66 +115,7 @@ async function submitUserMessage(content: string) {
 
       return textNode;
     },
-    tools: {
-      listStocks: {
-        description: 'List three imaginary stocks that are trending.',
-        parameters: z.object({
-          stocks: z.array(
-            z.object({
-              symbol: z.string().describe('The symbol of the stock'),
-              price: z.number().describe('The price of the stock'),
-              delta: z.number().describe('The change in price of the stock'),
-            })
-          ),
-        }),
-        generate: async function* ({ stocks }) {
-          yield (
-            <BotCard>
-              <div className="bg-red-500">loaindg</div>
-            </BotCard>
-          );
-
-          const toolCallId = nanoid();
-
-          aiState.done({
-            ...aiState.get(),
-            messages: [
-              ...aiState.get().messages,
-              {
-                id: nanoid(),
-                role: 'assistant',
-                content: [
-                  {
-                    type: 'tool-call',
-                    toolName: 'listStocks',
-                    toolCallId,
-                    args: { stocks },
-                  },
-                ],
-              },
-              {
-                id: nanoid(),
-                role: 'tool',
-                content: [
-                  {
-                    type: 'tool-result',
-                    toolName: 'listStocks',
-                    toolCallId,
-                    result: stocks,
-                  },
-                ],
-              },
-            ],
-          });
-
-          return (
-            <BotCard>
-              <div className="bg-red-500">loaindg</div>
-            </BotCard>
-          );
-        },
-      },
-    },
+    tools: {},
   });
 
   return {
@@ -263,7 +138,6 @@ export type UIState = {
 export const AI = createAI<AIState, UIState>({
   actions: {
     submitUserMessage,
-    confirmPurchase,
   },
   initialUIState: [],
   initialAIState: { chatId: nanoid(), messages: [], selectedFile: null },

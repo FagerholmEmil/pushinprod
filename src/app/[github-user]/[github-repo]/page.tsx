@@ -14,8 +14,6 @@ import { getFileData } from './actions';
 import { AtomHydrate } from './AtomHydrate';
 import { cn } from '@/lib/utils';
 
-export const revalidate = 0;
-
 export default async function Home({
   params,
 }: {
