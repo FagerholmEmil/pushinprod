@@ -7,10 +7,7 @@ import { AI } from './actions';
 import { ButtonScrollToBottom } from './ButtonScrollToBottom';
 import { useAtom, useAtomValue } from 'jotai';
 import { PromptForm } from './PromptForm';
-import {
-  repoDataAtom,
-  selectedFileAtom,
-} from '../[github-user]/[github-repo]/state';
+import { repoDataAtom, selectedFileAtom } from '../state';
 import { cn } from '@/lib/utils';
 
 export interface ChatPanelProps {

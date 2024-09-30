@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 import React from 'react';
 import { FileExplorer } from './FileExplorer';
 import { FileCode } from './FileCode';
-import { FileChat } from '@/app/(chat)/FileChat';
+import { FileChat } from './_chat/FileChat';
 import {
   ResizableHandle,
   ResizablePanel,

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 import './globals.css';
-import { AI } from './(chat)/actions';
+import { AI } from './[github-user]/[github-repo]/_chat/actions';
 import { Toaster } from '@/components/ui/sonner';
 import { Provider } from 'jotai';
 
