@@ -8,7 +8,7 @@ import { useAtomValue, useSetAtom } from 'jotai';
 import {
   repoDataAtom,
   selectedFileAtom,
-} from '../app/[github-user]/[github-repo]/state';
+} from '../[github-user]/[github-repo]/state';
 
 interface Node extends d3.SimulationNodeDatum {
   id: string;

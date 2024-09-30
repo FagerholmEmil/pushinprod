@@ -19,8 +19,6 @@ export default async function Home({
 }: {
   params: { 'github-user': string; 'github-repo': string };
 }) {
-  console.log(params);
-
   const { 'github-user': githubUser, 'github-repo': githubRepo } = params;
 
   const fileData = await getFileData(githubUser, githubRepo);

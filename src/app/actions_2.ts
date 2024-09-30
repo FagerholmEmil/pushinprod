@@ -102,6 +102,10 @@ export const cloneRepo = async (repo: string) => {
 
   async function processContent(item: any) {
     if (item.type === 'file') {
+      if (item.path.endsWith('.DS_Store')) {
+        return;
+      }
+
       const { data: fileContent } = await octokit.rest.repos.getContent({
         owner,
         repo: repoName,

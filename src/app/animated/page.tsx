@@ -1,4 +1,4 @@
-import { AnimatedTree } from '@/components/AnimatedTree';
+import { AnimatedTree } from './AnimatedTree';
 import React from 'react';
 
 const Page = () => {
