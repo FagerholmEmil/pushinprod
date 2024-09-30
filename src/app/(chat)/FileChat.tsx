@@ -3,8 +3,7 @@
 import { useScrollAnchor } from '@/lib/useScrollAnchor';
 import { cn } from '@/lib/utils';
 import { useUIState } from 'ai/rsc';
-import React, { ReactNode, useState } from 'react';
-import { EmptyScreen } from './EmptyScreen';
+import React, { useEffect, useState } from 'react';
 import { ChatList } from './ChatList';
 import { ChatPanel } from './ChatPanel';
 
@@ -15,28 +14,30 @@ export const FileChat: React.FC<FileChatProps> = ({}) => {
 
   const [messages] = useUIState();
 
-  const { messagesRef, scrollRef, visibilityRef, isAtBottom, scrollToBottom } =
+  const { messagesRef, scrollRef, visibilityRef, scrollToBottom } =
     useScrollAnchor();
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   return (
     <div
-      className="group w-full relative h-full overflow-y-auto pl-0"
+      className="group w-full grid grid-rows-[1fr_auto] relative h-full overflow-y-auto pl-0"
       ref={scrollRef}
     >
-      <div className={cn(messages.length > 0 ? 'pt-6' : '')} ref={messagesRef}>
+      <div
+        className={cn('overflow-y-auto', messages.length > 0 && 'pt-6')}
+        ref={messagesRef}
+      >
         {messages.length ? (
-          <ChatList messages={messages} isShared={false} />
+          <ChatList messages={messages} />
         ) : // <EmptyScreen />
         null}
 
         <div className="w-full h-px" ref={visibilityRef} />
       </div>
-      <ChatPanel
-        input={input}
-        setInput={setInput}
-        isAtBottom={isAtBottom}
-        scrollToBottom={scrollToBottom}
-      />
+      <ChatPanel input={input} setInput={setInput} />
     </div>
   );
 };

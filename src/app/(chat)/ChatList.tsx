@@ -5,10 +5,9 @@ import { UIState } from './types';
 
 export interface ChatList {
   messages: UIState;
-  isShared: boolean;
 }
 
-export function ChatList({ messages, isShared }: ChatList) {
+export function ChatList({ messages }: ChatList) {
   if (!messages.length) {
     return null;
   }

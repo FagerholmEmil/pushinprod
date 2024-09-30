@@ -3,13 +3,24 @@
 
 'use client';
 
-import React, { FC, memo, useEffect, useState } from 'react';
-import { codeToHtml } from 'shiki';
+import React, { FC } from 'react';
+import { createHighlighterCoreSync, createJavaScriptRegexEngine } from 'shiki';
 
 import { Button } from '@/components/ui/button';
 import { Check, Copy, Download } from 'lucide-react';
 import { useCopyToClipboard } from './useCopyToClipboard';
 import { Skeleton } from '@/components/ui/skeleton';
+
+import js from 'shiki/langs/javascript.mjs';
+import ts from 'shiki/langs/typescript.mjs';
+import css from 'shiki/langs/css.mjs';
+import html from 'shiki/langs/html.mjs';
+import json from 'shiki/langs/json.mjs';
+import markdown from 'shiki/langs/markdown.mjs';
+import python from 'shiki/langs/python.mjs';
+import bash from 'shiki/langs/bash.mjs';
+import sql from 'shiki/langs/sql.mjs';
+import vitesseDark from 'shiki/themes/vitesse-dark.mjs';
 
 interface Props {
   language: string;
@@ -47,11 +58,11 @@ export const programmingLanguages: languageMap = {
   // add more file extensions here, make sure the key is same as language prop in CodeBlock.tsx component
 };
 
-// const shiki = createHighlighterCoreSync({
-//   themes: [nord],
-//   langs: [js],
-//   engine: createJavaScriptRegexEngine(),
-// });
+const shiki = createHighlighterCoreSync({
+  themes: [vitesseDark],
+  langs: [js, ts, css, html, json, markdown, python, bash, sql],
+  engine: createJavaScriptRegexEngine(),
+});
 
 export const generateRandomString = (length: number, lowercase = false) => {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXY3456789'; // excluding similar looking characters like Z, 2, I, 1, O, 0
@@ -62,29 +73,13 @@ export const generateRandomString = (length: number, lowercase = false) => {
   return lowercase ? result.toLowerCase() : result;
 };
 
-const CodeBlock: FC<Props> = memo(({ language, value }) => {
+export const CodeBlock: FC<Props> = ({ language, value }) => {
   const { isCopied, copyToClipboard } = useCopyToClipboard({ timeout: 2000 });
-  // const highlightedCode = shiki.codeToHtml(value, {
-  //   lang: language,
-  //   theme: 'nord',
-  // });
 
-  // const [highlightedCode, setHighlightedCode] = useState<string>('');
-
-  // const [highlightedCode, setHighlightedCode] = useState<string>('');
-
-  // useEffect(() => {
-  //   const highlight = async () => {
-  //     const out = await codeToHtml(value, {
-  //       lang: language,
-  //       theme: 'vitesse-dark',
-  //     });
-
-  //     setHighlightedCode(out);
-  //   };
-
-  //   highlight();
-  // }, [language, value]);
+  const highlightedCode = shiki.codeToHtml(value, {
+    lang: language,
+    theme: 'vitesse-dark',
+  });
 
   const downloadAsFile = () => {
     if (typeof window === 'undefined') {
@@ -149,33 +144,10 @@ const CodeBlock: FC<Props> = memo(({ language, value }) => {
         </div>
       </div>
 
-      <React.Suspense fallback={<Skeleton className="w-full h-80" />}>
-        <CodeBlock2 source={value} fileExtension={language} />
-      </React.Suspense>
+      <div
+        dangerouslySetInnerHTML={{ __html: highlightedCode ?? '' }}
+        className="[&>pre]:overflow-x-auto [&>pre]:p-4 text-xs"
+      />
     </div>
   );
-});
-
-const CodeBlock2 = async ({
-  source,
-  fileExtension,
-}: {
-  source: string;
-  fileExtension: string;
-}) => {
-  const out = await codeToHtml(source, {
-    lang: fileExtension,
-    theme: 'vitesse-dark',
-  });
-
-  return (
-    <div
-      dangerouslySetInnerHTML={{ __html: out }}
-      className="[&>pre]:overflow-x-auto [&>pre]:p-4 text-xs"
-    />
-  );
 };
-
-CodeBlock.displayName = 'CodeBlock';
-
-export { CodeBlock };

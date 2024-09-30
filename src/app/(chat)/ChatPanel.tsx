@@ -16,20 +16,11 @@ import { cn } from '@/lib/utils';
 export interface ChatPanelProps {
   input: string;
   setInput: (value: string) => void;
-  isAtBottom: boolean;
-  scrollToBottom: () => void;
 }
 
-export function ChatPanel({
-  input,
-  setInput,
-  isAtBottom,
-  scrollToBottom,
-}: ChatPanelProps) {
-  const [aiState] = useAIState();
+export function ChatPanel({ input, setInput }: ChatPanelProps) {
   const [messages, setMessages] = useUIState<typeof AI>();
   const { submitUserMessage } = useActions();
-  const [shareDialogOpen, setShareDialogOpen] = React.useState(false);
   const [selectedFile] = useAtom(selectedFileAtom);
   const data = useAtomValue(repoDataAtom);
   const fileSource = selectedFile
@@ -108,33 +99,31 @@ Provide a prioritized list of testing improvements to enhance overall code relia
 
   return (
     <div className="w-full bg-gradient-to-b sticky bottom-0 from-muted/30 from-0% to-muted/30 to-50% duration-300 ease-in-out animate-in dark:from-background/10 dark:from-10% dark:to-background/80">
-      <ButtonScrollToBottom
+      {/* <ButtonScrollToBottom
         isAtBottom={isAtBottom}
         scrollToBottom={scrollToBottom}
-      />
+      /> */}
 
       <div className="p-4">
-        <div className="mb-4 grid grid-cols-2 gap-4">
-          {messages.length === 0 && (
-            <>
-              {visibleExampleMessages.map((example) => (
-                <ExampleMessageCard
-                  key={example.heading}
-                  example={example}
-                  onClick={handleExampleClick}
-                />
-              ))}
-              {additionalExampleMessages.map((example) => (
-                <ExampleMessageCard
-                  key={example.heading}
-                  example={example}
-                  onClick={handleExampleClick}
-                  className="hidden md:block"
-                />
-              ))}
-            </>
-          )}
-        </div>
+        {messages.length === 0 && fileSource && (
+          <div className="mb-4 grid grid-cols-2 gap-4">
+            {visibleExampleMessages.map((example) => (
+              <ExampleMessageCard
+                key={example.heading}
+                example={example}
+                onClick={handleExampleClick}
+              />
+            ))}
+            {additionalExampleMessages.map((example) => (
+              <ExampleMessageCard
+                key={example.heading}
+                example={example}
+                onClick={handleExampleClick}
+                className="hidden md:block"
+              />
+            ))}
+          </div>
+        )}
 
         <PromptForm input={input} setInput={setInput} />
       </div>

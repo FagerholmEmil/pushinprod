@@ -8,7 +8,7 @@ import remarkMath from 'remark-math';
 import { StreamableValue } from 'ai/rsc';
 import { useStreamableText } from './useStreamableText';
 import { CodeBlock } from './CodeBlock';
-import { Bot, User } from 'lucide-react';
+import { Bot } from 'lucide-react';
 
 // Different types of message bubbles.
 
@@ -63,7 +63,7 @@ export function BotMessage({
               return (
                 <CodeBlock
                   key={Math.random()}
-                  language={(match && match[1]) || ''}
+                  language={(match && match[1]) || 'javascript'}
                   value={String(children).replace(/\n$/, '')}
                   {...props}
                 />
