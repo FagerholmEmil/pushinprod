@@ -14,12 +14,38 @@ const execAsync = promisify(exec);
 const readFileAsync = promisify(fs.readFile);
 
 export const cloneRepo = async (repo: string) => {
-  console.log('Clone repo');
+  console.log('Fetching repo');
 
-  let repoUrl = repo;
-  if (!repo.startsWith('https://github.com/')) {
-    repoUrl = `https://github.com/${repo}`;
+  let owner = '';
+  let repoName = '';
+
+  // Check if the repo is a full GitHub URL
+  if (repo.startsWith('https://github.com/')) {
+    const urlParts = repo.split('/');
+    if (urlParts.length >= 5) {
+      owner = urlParts[urlParts.length - 2];
+      repoName = urlParts[urlParts.length - 1];
+    } else {
+      return {
+        success: false,
+        is404: false,
+        message: 'Invalid GitHub URL format. Use https://github.com/owner/repo',
+      };
+    }
+  } else {
+    [owner, repoName] = repo.split('/');
   }
+
+  if (!owner || !repoName) {
+    return {
+      success: false,
+      is404: false,
+      message: 'Invalid repository format. Use owner/repo or full GitHub URL',
+    };
+  }
+
+  let repoUrl = `https://github.com/${owner}/${repoName}`;
+
   if (!repoUrl.endsWith('.git')) {
     repoUrl += '.git';
   }
@@ -96,27 +122,27 @@ export const cloneRepo = async (repo: string) => {
       });
     }
 
-    knowledgeTree[path] = {
+    knowledgeTree[
+      path.replace('/Users/matheus/Desktop/pushinprod/repos/ui/', '')
+    ] = {
       source: content,
       dependencies: dependencies,
     };
   });
 
-  const writeFileAsync = promisify(fs.writeFile);
-
-  const repoName = repoUrl?.split('/')?.pop()?.replace('.git', '');
-  const userName = repoUrl?.split('/')?.slice(-2, -1)[0];
-  const fileName = `${userName}-${repoName}.json`;
-  const outputPath = path.join('knowledge-tree', fileName);
-
   console.log('writing json response');
 
-  await fs.promises.mkdir('knowledge-tree', { recursive: true });
-  await writeFileAsync(outputPath, JSON.stringify(knowledgeTree, null, 2));
+  console.log('Saving to db', { owner, repoName });
 
-  console.log(`Knowledge tree written to ${outputPath}`);
+  await db.insert(reposTable).values({
+    github_user: owner,
+    github_repo: repoName,
+    knowledge_tree: JSON.stringify(knowledgeTree),
+  });
 
-  return { success: true };
+  console.log('Added to db');
+
+  return { success: true, owner, repoName };
 };
 
 export const saveRepo = async (repo: string) => {

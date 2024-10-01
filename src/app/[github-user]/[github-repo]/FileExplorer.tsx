@@ -42,7 +42,16 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({}) => {
           <span className="text-xs">⌘</span>J
         </kbd>
       </p> */}
-      <CommandDialog open={open} onOpenChange={setOpen}>
+      <CommandDialog
+        open={open}
+        onOpenChange={setOpen}
+        commandProps={{
+          filter: (value, search) => {
+            if (value.includes(search)) return 1;
+            return 0;
+          },
+        }}
+      >
         <CommandInput placeholder="Type a command or search..." />
         <CommandList>
           <CommandEmpty>No results found.</CommandEmpty>
