@@ -19,6 +19,8 @@ export const nanoid = customAlphabet(
   7
 ); // 7-character random string
 
+export const maxDuration = 30; // This function can run for a maximum of 5 seconds
+
 async function submitUserMessage(content: string) {
   'use server';
 

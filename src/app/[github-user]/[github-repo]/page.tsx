@@ -1,6 +1,8 @@
+'use client';
+
 import { Sidebar } from './Sidebar';
 import { KnowledgeTree } from './KnowledgeTree';
-import { Button, buttonVariants } from '@/components/ui/button';
+import { buttonVariants } from '@/components/ui/button';
 import Link from 'next/link';
 import {
   ResizableHandle,
@@ -9,13 +11,10 @@ import {
 } from '@/components/ui/resizable';
 import { OpenExplorerButton } from './OpenExplorerButton';
 import { FileSettings } from './FileSettings';
-import { useParams, notFound } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import { getFileData } from './actions';
 import { AtomHydrate } from './AtomHydrate';
 import { cn } from '@/lib/utils';
-
-export const runtime = 'edge';
-export const preferredRegion = 'home';
 
 export default async function Home({
   params,
