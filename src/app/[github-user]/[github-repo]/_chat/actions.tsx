@@ -9,7 +9,6 @@ import {
 } from 'ai/rsc';
 import { openai } from '@ai-sdk/openai';
 import { customAlphabet } from 'nanoid';
-import { z } from 'zod';
 import { BotCard, BotMessage, SpinnerMessage } from './Message';
 import { Chat, Message } from './types';
 import { UserMessage } from './UserMessage';
@@ -18,8 +17,6 @@ export const nanoid = customAlphabet(
   '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz',
   7
 ); // 7-character random string
-
-export const maxDuration = 30; // This function can run for a maximum of 5 seconds
 
 async function submitUserMessage(content: string) {
   'use server';
