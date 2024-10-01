@@ -14,6 +14,9 @@ import { getFileData } from './actions';
 import { AtomHydrate } from './AtomHydrate';
 import { cn } from '@/lib/utils';
 
+export const runtime = 'edge';
+export const preferredRegion = 'home';
+
 export default async function Home({
   params,
 }: {

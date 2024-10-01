@@ -61,13 +61,12 @@ export function BotMessage({
               }
 
               return (
-                <div>Hej</div>
-                // <CodeBlock
-                //   key={Math.random()}
-                //   language={(match && match[1]) || 'javascript'}
-                //   value={String(children).replace(/\n$/, '')}
-                //   {...props}
-                // />
+                <CodeBlock
+                  key={Math.random()}
+                  language={(match && match[1]) || 'javascript'}
+                  value={String(children).replace(/\n$/, '')}
+                  {...props}
+                />
               );
             },
           }}
