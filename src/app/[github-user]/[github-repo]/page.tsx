@@ -1,5 +1,3 @@
-'use client';
-
 import { Sidebar } from './Sidebar';
 import { KnowledgeTree } from './KnowledgeTree';
 import { buttonVariants } from '@/components/ui/button';
